@@ -1,0 +1,5 @@
+spring.profiles.active: init
+classpath: contacts.txt
+save.path: src/main/resources/save-contacts.txt
+spring.info.build.encoding: UTF-8
+spring.mandatory-file-encoding: UTF-8
