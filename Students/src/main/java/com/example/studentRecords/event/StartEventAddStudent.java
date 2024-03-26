@@ -3,12 +3,14 @@ package com.example.studentRecords.event;
 import com.example.studentRecords.model.Student;
 import com.example.studentRecords.service.StudentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 @ConditionalOnProperty(name = "app.add-students-on-start", havingValue = "true")
 @RequiredArgsConstructor
 public class StartEventAddStudent {
@@ -26,6 +28,7 @@ public class StartEventAddStudent {
                 .lastName("Степанов")
                 .age(20)
                 .build());
-        System.out.println("Для получения списка команд, введите: com");
+        log.info("\nДля получения списка команд, введите: com");
+        //System.out.println("Для получения списка команд, введите: com");
     }
 }

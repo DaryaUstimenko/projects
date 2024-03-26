@@ -13,7 +13,10 @@ public class StudentRecordsShell {
     private final StudentService studentService;
 
     @ShellMethod(key = "save")
-    public void saveStudent(@ShellOption String firstName, @ShellOption String lastName, @ShellOption int age) {
+    public void saveStudent(
+            @ShellOption(help = "Add student firstName") String firstName,
+            @ShellOption(help = "Add student lastName") String lastName,
+            @ShellOption(help = "Add student age") int age) {
         Student student = new Student();
         student.setFirstName(firstName);
         student.setLastName(lastName);
@@ -22,12 +25,12 @@ public class StudentRecordsShell {
     }
 
     @ShellMethod(key = "get")
-    public void getStudentById(@ShellOption int id) {
+    public void getStudentById(@ShellOption(help = "Add id for get student") int id) {
         studentService.getStudentById(id);
     }
 
     @ShellMethod(key = "rm")
-    public void removeStudent(@ShellOption int id) {
+    public void removeStudent(@ShellOption(help = "Add id for delete student") int id) {
         studentService.removeStudent(id);
     }
 
