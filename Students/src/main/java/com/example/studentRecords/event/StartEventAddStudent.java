@@ -29,6 +29,5 @@ public class StartEventAddStudent {
                 .age(20)
                 .build());
         log.info("\nДля получения списка команд, введите: com");
-        //System.out.println("Для получения списка команд, введите: com");
     }
 }
