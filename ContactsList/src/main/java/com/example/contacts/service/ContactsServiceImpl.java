@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +19,8 @@ public class ContactsServiceImpl implements ContactsService {
     }
 
     @Override
-    public Contact findById(Long id) {
-        return repository.findById(id).orElse(null);
+    public Optional<Contact> findById(Long id) {
+        return repository.findById(id);
     }
 
     @Override

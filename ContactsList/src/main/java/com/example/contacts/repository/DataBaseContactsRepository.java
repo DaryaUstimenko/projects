@@ -13,13 +13,15 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
-//@Primary
 @RequiredArgsConstructor
 @Slf4j
-public class DataBaseContactsRepository implements ContactsRepository{
-    private  final JdbcTemplate jdbcTemplate;
+public class DataBaseContactsRepository implements ContactsRepository {
+    private final JdbcTemplate jdbcTemplate;
+    private final AtomicLong currentId = new AtomicLong(1);
+
     @Override
     public List<Contact> findAll() {
         String sql = "SELECT * FROM contacts";
@@ -32,21 +34,30 @@ public class DataBaseContactsRepository implements ContactsRepository{
         String sql = "SELECT * FROM contacts WHERE id = ?";
         Contact contact = DataAccessUtils.singleResult(jdbcTemplate.query(sql,
                 new ArgumentPreparedStatementSetter(new Object[]{id}),
-                new RowMapperResultSetExtractor<>(new ContactMapper(),1)));
-        log.debug("In DataBase: Contact with ID: {} was found", contact.getId());
+                new RowMapperResultSetExtractor<>(new ContactMapper(), 1)));
+        //Добавление условной проверки, если контакт равен нулю
+        if (contact == null) {
+            log.info("In DataBase: Contact with ID: {} not found", id);
+            throw new ContactNotFoundException("Contact with ID: " + id + "not found");
+        } else {
+            log.info("In DataBase: Contact with ID: {} was found", id);
+        }
         return Optional.ofNullable(contact);
     }
 
     @Override
     public Contact save(Contact contact) {
         if (contact.getId() == null) {
-            contact.setId(System.currentTimeMillis());
+            Long id = currentId.getAndIncrement();
+            log.info("id" + id);
+            contact.setId(id);
+            log.info("next id" + id);
             String sql = "INSERT INTO contacts (firstName,lastName,email,phone,id) VALUES (?,?,?,?,?)";
             jdbcTemplate.update(sql, contact.getFirstName(), contact.getLastName(),
                     contact.getEmail(), contact.getPhone(), contact.getId());
             log.debug("In DataBase: Contact with ID: {} was saved", contact.getId());
             return contact;
-        }else {
+        } else {
             return update(contact);
         }
 
@@ -57,19 +68,17 @@ public class DataBaseContactsRepository implements ContactsRepository{
         Contact existedContact = findById(contact.getId()).orElse(null);
         if (existedContact != null) {
             String sql = "UPDATE contacts SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE id = ?";
-            jdbcTemplate.update(sql,contact.getFirstName(), contact.getLastName(), contact.getEmail(),
+            jdbcTemplate.update(sql, contact.getFirstName(), contact.getLastName(), contact.getEmail(),
                     contact.getPhone(), contact.getId());
             log.debug("In DataBase: Contact: {} was updated", contact);
-            return contact;
         }
-        log.warn("Contact with ID {} not found",contact.getId());
-        throw new ContactNotFoundException("Contact with ID:" + contact.getId() + "not found");
+        return contact;
     }
 
     @Override
     public void deleteById(Long id) {
         String sql = "DELETE FROM contacts WHERE id = ?";
-        jdbcTemplate.update(sql,id);
+        jdbcTemplate.update(sql, id);
         log.debug("In DataBase: Contact with ID: {} was deleted", id);
     }
 }

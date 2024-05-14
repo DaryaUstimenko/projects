@@ -10,19 +10,23 @@
     <input type="hidden" name="id"  th:value="${contact?.id}">
     <div>
         <label for="firstName">First Name:</label>
-        <input type="text" id="firstName" name="firstName" required th:value="${contact?.firstName}">
+        <input type="text" id="firstName" name="firstName" required th:field="${contact.firstName}">
+        <span th:if="${#fields.hasErrors('contact.firstName')}" th:errorclass="error" th:errors="*{contact.firstName}"></span>
     </div>
     <div>
-        <label for="lastName">Last Name:</label>
-        <input type="text" id="lastName" name="lastName" required th:value="${contact?.lastName}">
+        <label>Last Name:</label>
+        <input type="text" required th:field="${contact.lastName}">
+        <span th:if="${#fields.hasErrors('contact.lastName')}" th:errors="*{contact.lastName}"></span>
     </div>
     <div>
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="email" required th:value="${contact?.email}">
+        <label>Email:</label>
+        <input type="text" required th:field="${contact.email}">
+        <span th:if="${#fields.hasErrors('contact.email')}" th:errors="*{contact.email}"></span>
     </div>
     <div>
-        <label for="phone">Phone:</label>
-        <input type="text" id="phone" name="phone" required th:value="${contact?.phone}">
+        <label>Phone:</label>
+        <input type="text" required th:field="${contact.phone}">
+        <span th:if="${#fields.hasErrors('contact.phone')}" th:errors="*{contact.phone}"></span>
     </div>
     <button type="submit">Save</button>
 </form>
