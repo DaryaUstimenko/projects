@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.MessageFormat;
@@ -28,6 +29,7 @@ public class UserController {
     private final UserMapper userMapper;
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ModelListResponse<UserResponse>> getAllUsersPage(@Valid PaginationRequest request) {
         Page<User> userPage = userService.findAll(request.pageRequest());
 
@@ -40,11 +42,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<UserResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(userMapper.userToResponse(userService.findById(id)));
     }
 
     @GetMapping("/name/{username}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<UserResponse> getUserByName(@PathVariable String username){
         return ResponseEntity.ok(userMapper.userToResponse(userService.findByUsername(username)));
     }
@@ -64,6 +68,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<UserResponse> updateUser(@RequestBody UpsertUserRequest request, @PathVariable UUID id) {
         User updatedUser = userService.update(id, userMapper.upsertRequestToUser(request));
 
@@ -71,6 +76,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
         userService.deleteById(id);
 

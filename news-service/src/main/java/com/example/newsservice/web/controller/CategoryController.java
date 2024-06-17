@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -38,11 +39,13 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<CategoryResponse> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(categoryMapper.categoryToResponse(categoryService.findById(id)));
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CategoryResponse> createCategory(@RequestBody UpsertCategoryRequest request) {
         Category newCategory = categoryService.save(categoryMapper.upsertRequestToCategory(request));
 
@@ -51,6 +54,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CategoryResponse> updateCategory(@RequestBody UpsertCategoryRequest request,
                                                            @PathVariable UUID id) {
         Category updatedCategory = categoryService.update(id, categoryMapper.upsertRequestToCategory(request));
@@ -59,6 +63,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
         categoryService.deleteById(id);
 

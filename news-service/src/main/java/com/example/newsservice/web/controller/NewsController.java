@@ -1,5 +1,6 @@
 package com.example.newsservice.web.controller;
 
+import com.example.newsservice.aop.AuthorizeAction;
 import com.example.newsservice.entity.News;
 import com.example.newsservice.mapper.NewsMapper;
 import com.example.newsservice.service.NewsService;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -27,6 +29,7 @@ public class NewsController {
     private final NewsMapper newsMapper;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<ModelListResponse<BriefNewsResponse>> filterBy(@Valid NewsFilterRequest request) {
         Page<News> news= newsService.filterBy(request);
 
@@ -39,11 +42,13 @@ public class NewsController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<NewsResponse> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(newsMapper.newsToResponse(newsService.findById(id)));
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<NewsResponse> createNews(@RequestBody UpsertNewsRequest request,
                                                    @RequestParam UUID userId,
                                                    @RequestParam UUID categoryId) {
@@ -54,8 +59,9 @@ public class NewsController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<NewsResponse> updateNews(@RequestBody UpsertNewsRequest request,
-                                                   @PathVariable UUID id,
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    @AuthorizeAction(actionType = "update")
+    public ResponseEntity<NewsResponse> updateNews(@PathVariable UUID id, @RequestBody UpsertNewsRequest request,
                                                    @RequestParam(required = false) UUID categoryId) {
          News updatedPost = newsService.updateNews(newsMapper.upsertRequestToNews(request), id, categoryId);
 
@@ -63,6 +69,8 @@ public class NewsController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    @AuthorizeAction(actionType = "delete")
     public ResponseEntity<Void> deleteNewsById(@PathVariable UUID id) {
         newsService.deleteById(id);
 

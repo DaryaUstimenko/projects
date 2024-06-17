@@ -22,8 +22,17 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Column(nullable = false)
+    private String password;
+
     @Column(nullable = false, unique = true)
     private String email;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    //@Builder.Default
+    private List<Role> roles = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
