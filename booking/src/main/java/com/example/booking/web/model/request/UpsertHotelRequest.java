@@ -32,8 +32,7 @@ public class UpsertHotelRequest {
     private String address;
 
     @NotNull
-    @Size(min = 10, max = 120, message = "Min size for description distance: {min}. Max size is: {max}")
-    private String centerDistance;
+    private double centerDistance;
 
     private double rating;
 

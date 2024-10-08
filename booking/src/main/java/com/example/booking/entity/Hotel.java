@@ -34,7 +34,7 @@ public class Hotel {
     private String address;
 
     @Column(nullable = false)
-    private String centerDistance;
+    private double centerDistance;
 
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude

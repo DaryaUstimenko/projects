@@ -3,10 +3,13 @@ package com.example.booking.service.impl;
 import com.example.booking.entity.Hotel;
 import com.example.booking.entity.Room;
 import com.example.booking.repository.RoomRepository;
+import com.example.booking.repository.RoomSpecification;
 import com.example.booking.service.AbstractEntityService;
 import com.example.booking.service.HotelService;
 import com.example.booking.service.RoomService;
+import com.example.booking.web.model.request.RoomsFilterRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +26,12 @@ public class RoomServiceImpl extends AbstractEntityService<Room, UUID, RoomRepos
     public RoomServiceImpl(RoomRepository repository, HotelService hotelService) {
         super(repository);
         this.hotelService = hotelService;
+    }
+
+    @Override
+    public Page<Room> filterBy(RoomsFilterRequest filter) {
+        return repository.findAll(RoomSpecification.withFilter(filter),
+                filter.getPagination().pageRequest());
     }
 
     @Override

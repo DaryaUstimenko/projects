@@ -2,6 +2,7 @@ package com.example.booking.service.impl;
 
 import com.example.booking.entity.Booking;
 import com.example.booking.entity.Room;
+import com.example.booking.entity.UnavailableDates;
 import com.example.booking.entity.User;
 import com.example.booking.exception.WrongDatePeriodException;
 import com.example.booking.repository.BookingRepository;
@@ -14,9 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Period;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -50,23 +49,37 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
     @Transactional
     public Booking addBooking(Booking booking, UUID roomId, UUID userId) {
         User user = userService.findById(userId);
-        user.addBooking(booking);
         Room room = roomService.findById(roomId);
 
-        booking.setBookingInfo("You created booking for duration from: " + booking.getBusyFrom() +
-                " to: " + booking.getBusyTo() +
-                " at the hotel: " + room.getHotel().getHotelName().toUpperCase(Locale.ROOT));
-
-        room.addBooking(booking);
-
         Period period = Period.between(booking.getBusyFrom(), booking.getBusyTo());
-
         if (period.getDays() < 0) {
             throw new WrongDatePeriodException("You have entered a start date later " +
                     "than the final booking date! Please changed it!");
         }
-        if (!room.getBusyDates().contains(period)) {
-            room.getBusyDates().add(period);
+
+        boolean isDateAvailable = room.getUnavailableDates().stream().allMatch(d -> {
+            if (booking.getBusyFrom().isBefore(d.getBusyTo()) &&
+                    booking.getBusyTo().isAfter(d.getBusyFrom())) {
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        if (isDateAvailable) {
+
+            UnavailableDates unavailableDate = new UnavailableDates();
+            unavailableDate.setBusyFrom(booking.getBusyFrom());
+            unavailableDate.setBusyTo(booking.getBusyTo());
+            unavailableDate.setRoom(room);
+
+            room.addUnavailableDates(unavailableDate);
+            room.addBooking(booking);
+            user.addBooking(booking);
+
+            booking.setBookingInfo("You created booking for duration from: " + booking.getBusyFrom() +
+                    " to: " + booking.getBusyTo() +
+                    " at the hotel: " + room.getHotel().getHotelName().toUpperCase(Locale.ROOT));
         } else {
             throw new WrongDatePeriodException("Those dates are already booked!");
         }

@@ -1,0 +1,49 @@
+POST http://localhost:8080/api/v1/hotel
+Content-Type: application/json
+
+{
+    "hotelName" : "Hotel",
+    "title" : "The best and biggest hotel in the city",
+    "city" : "Rome",
+    "address" : "main street 23",
+    "centerDistance" : 0.3
+}
+
+POST http://localhost:8080/api/v1/room?hotelId=...
+Content-Type: application/json
+
+{
+    "name" : "PentHouse",
+    "description" : "the best room in hotel",
+    "number" : 10,
+    "price" : 2000,
+    "maxCountGuests" : 4
+}
+
+
+POST http://localhost:8080/api/v1/user?role=ROLE_USER
+Content-Type: application/json
+
+{
+    "username" : "name",
+    "password" : "1234",
+    "email" : "someEmail.com"
+}
+
+POST http://localhost:8080/api/v1/booking?roomId=...&userId=...
+Content-Type: application/json
+
+{
+    "busyFrom" : "2025-02-03",
+    "busyTo" : "2025-02-07"
+}
+
+GET http://localhost:8080/api/v1/booking?pageNumber=0&pageSize=6
+
+GET http://localhost:8080/api/v1/hotel/filter?pageNumber=0&pageSize=5
+
+//&title=...&city=...&address=...&centerDistance=...
+
+GET http://localhost:8080/api/v1/room/filter?pageNumber=0&pageSize=6
+
+//&hotelId=...maxPrice=...&maxCountGuests=...&busyFrom=2025-02-03&busyTo=2025-02-07

@@ -5,7 +5,6 @@ import lombok.*;
 import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.*;
 
 @Entity
@@ -45,6 +44,10 @@ public class Room {
 
     private LocalDate busyTo;
 
+    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private List<UnavailableDates> unavailableDates = new ArrayList<>();
+
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<Booking> bookings = new ArrayList<>();
@@ -54,27 +57,8 @@ public class Room {
         bookings.add(booking);
     }
 
-    @Convert(converter = PeriodConverter.class)
-    public List<Period> busyDates = new ArrayList<>();
-}
-
-
-@Converter(autoApply = true)
-class PeriodConverter implements AttributeConverter<Period, String> {
-
-    @Override
-    public String convertToDatabaseColumn(Period period) {
-        if (period == null) {
-            return null;
-        }
-        return period.toString();
-    }
-
-    @Override
-    public Period convertToEntityAttribute(String dbData) {
-        if (dbData == null) {
-            return null;
-        }
-        return Period.parse(dbData);
+    public void addUnavailableDates(UnavailableDates unavailableDates) {
+        unavailableDates.setRoom(this);
+        this.unavailableDates.add(unavailableDates);
     }
 }

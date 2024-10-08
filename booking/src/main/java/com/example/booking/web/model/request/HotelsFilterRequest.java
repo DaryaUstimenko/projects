@@ -1,4 +1,4 @@
-package com.example.booking.web.model.response;
+package com.example.booking.web.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,9 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class HotelUpdateResponse {
+public class HotelsFilterRequest {
+
+    private PaginationRequest pagination;
 
     private UUID id;
 
@@ -21,5 +23,10 @@ public class HotelUpdateResponse {
 
     private String address;
 
-    private double centerDistance;
+    private Double centerDistance;
+
+    private Double rating;
+
+    private Integer numberOFMarks;
+
 }

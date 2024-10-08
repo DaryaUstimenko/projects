@@ -2,9 +2,12 @@ package com.example.booking.service.impl;
 
 import com.example.booking.entity.Hotel;
 import com.example.booking.repository.HotelRepository;
+import com.example.booking.repository.HotelSpecification;
 import com.example.booking.service.AbstractEntityService;
 import com.example.booking.service.HotelService;
+import com.example.booking.web.model.request.HotelsFilterRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -13,9 +16,18 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class HotelServiceImpl extends AbstractEntityService<Hotel, UUID, HotelRepository>
-        implements HotelService{
+        implements HotelService {
 
-    public HotelServiceImpl(HotelRepository repository) {super(repository);}
+    public HotelServiceImpl(HotelRepository repository) {
+        super(repository);
+    }
+
+
+    @Override
+    public Page<Hotel> filterBy(HotelsFilterRequest filter) {
+        return repository.findAll(HotelSpecification.withFilter(filter),
+                filter.getPagination().pageRequest());
+    }
 
     @Override
     protected Hotel updateFields(Hotel oldEntity, Hotel newEntity) {
