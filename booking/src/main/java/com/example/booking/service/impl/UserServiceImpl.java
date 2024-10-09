@@ -7,6 +7,7 @@ import com.example.booking.service.AbstractEntityService;
 import com.example.booking.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -18,9 +19,11 @@ import java.util.UUID;
 public class UserServiceImpl extends AbstractEntityService<User, UUID, UserRepository>
         implements UserService {
 
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository repository) {
+    public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder) {
         super(repository);
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -49,6 +52,7 @@ public class UserServiceImpl extends AbstractEntityService<User, UUID, UserRepos
 
     @Override
     public User save(User entity) {
+        entity.setPassword(passwordEncoder.encode(entity.getPassword()));
         return super.save(entity);
     }
 

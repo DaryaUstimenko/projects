@@ -1,5 +1,6 @@
 package com.example.booking.web.controller;
 
+import com.example.booking.exception.AccessDeniedException;
 import com.example.booking.exception.AlreadyExistsException;
 import com.example.booking.exception.WrongDatePeriodException;
 import com.example.booking.web.model.response.ErrorResponse;
@@ -60,6 +61,14 @@ public class ExceptionHandlerController {
     public ResponseEntity<ErrorResponse> notValidDate(DateTimeException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(ex.getLocalizedMessage()));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> accessDenied(AccessDeniedException ex) {
+        log.error("Error trying to delete or update entity", ex);
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse(ex.getMessage()));
     }
 }
 

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -27,6 +28,7 @@ public class BookingController {
     private final BookingMapper bookingMapper;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ModelListResponse<BookingResponse>> findAll(@Valid PaginationRequest request) {
         Page<Booking> bookings = bookingService.findAll(request.pageRequest());
         return ResponseEntity.ok(
@@ -43,6 +45,7 @@ public class BookingController {
 //    }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<BookingResponse> createBooking(@RequestBody @Valid UpsertBookingRequest request,
                                                          @RequestParam UUID roomId,
                                                          @RequestParam UUID userId) {

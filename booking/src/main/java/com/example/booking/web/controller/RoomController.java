@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -29,6 +30,7 @@ public class RoomController {
     private final RoomMapper roomMapper;
 
     @GetMapping("/filter")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<ModelListResponse<RoomResponse>> filterBy(@Valid RoomsFilterRequest filter,
                                                                     @Valid PaginationRequest request) {
         filter.setPagination(request);
@@ -43,11 +45,13 @@ public class RoomController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<RoomResponse> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(roomMapper.roomToResponse(roomService.findById(id)));
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<RoomResponse> createRoom(@RequestBody @Valid UpsertRoomRequest request,
                                                    @RequestParam UUID hotelId) {
         Room newRoom = roomService.addRoom(roomMapper.upsertRequestToRoom(request), hotelId);
@@ -57,6 +61,7 @@ public class RoomController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<RoomResponse> updateRoom(@RequestBody @Valid UpsertRoomRequest request,
                                                    @PathVariable UUID id,
                                                    @RequestParam(required = false) UUID hotelId) {
@@ -66,6 +71,7 @@ public class RoomController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
         roomService.deleteById(id);
 

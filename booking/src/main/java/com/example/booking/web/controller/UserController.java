@@ -1,16 +1,22 @@
 package com.example.booking.web.controller;
 
+import com.example.booking.aop.AuthorizeAction;
 import com.example.booking.entity.RoleType;
 import com.example.booking.entity.User;
 import com.example.booking.exception.AlreadyExistsException;
 import com.example.booking.mapper.UserMapper;
 import com.example.booking.service.UserService;
+import com.example.booking.web.model.request.PaginationRequest;
 import com.example.booking.web.model.request.UpsertUserRequest;
+import com.example.booking.web.model.response.ModelListResponse;
 import com.example.booking.web.model.response.UserResponse;
 import com.example.booking.web.model.response.UserUpdateResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.MessageFormat;
@@ -25,12 +31,27 @@ public class UserController {
 
     private final UserMapper userMapper;
 
+    @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ModelListResponse<UserResponse>> getAllUsersPage(@Valid PaginationRequest request) {
+        Page<User> userPage = userService.findAll(request.pageRequest());
+
+        return ResponseEntity.ok(
+                ModelListResponse.<UserResponse>builder()
+                        .totalCount(userPage.getTotalElements())
+                        .data(userPage.stream().map(userMapper::userToResponse).toList())
+                        .build()
+        );
+    }
+
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<UserResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(userMapper.userToResponse(userService.findById(id)));
     }
 
     @GetMapping("/name/{username}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<UserResponse> getUserByName(@PathVariable String username) {
         return ResponseEntity.ok(userMapper.userToResponse(userService.findByUsername(username)));
     }
@@ -52,6 +73,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    @AuthorizeAction(actionType = "update")
     public ResponseEntity<UserUpdateResponse> updateUser(@PathVariable UUID id, @RequestBody UpsertUserRequest request) {
         User updatedUser = userService.update(id, userMapper.upsertRequestToUser(request));
 
@@ -59,6 +82,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    @AuthorizeAction(actionType = "delete")
     public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
         userService.deleteById(id);
 

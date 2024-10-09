@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -28,6 +29,7 @@ public class HotelController {
     private final HotelMapper hotelMapper;
 
     @GetMapping("/filter")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<ModelListResponse<HotelResponse>> filterBy(@Valid HotelsFilterRequest filter,
                                                                      @Valid PaginationRequest request) {
         filter.setPagination(request);
@@ -42,11 +44,13 @@ public class HotelController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<HotelResponse> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(hotelMapper.hotelToResponse(hotelService.findById(id)));
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<HotelResponse> createHotel(@RequestBody @Valid UpsertHotelUpdateRequest request) {
         Hotel newHotel = hotelService.save(hotelMapper.upsertRequestToUpdateHotel(request));
 
@@ -55,6 +59,7 @@ public class HotelController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<HotelUpdateResponse> updateHotel(@RequestBody @Valid UpsertHotelUpdateRequest request,
                                                            @PathVariable UUID id) {
         Hotel updatedHotel = hotelService.update(id, hotelMapper.upsertRequestToUpdateHotel(request));
@@ -63,6 +68,7 @@ public class HotelController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
         hotelService.deleteById(id);
 
