@@ -8,5 +8,7 @@ import java.util.UUID;
 
 public interface HotelService extends EntityService<Hotel, UUID> {
 
+    Hotel updateRating(UUID hotelId, int newMark);
+
     Page<Hotel> filterBy(HotelsFilterRequest filter);
 }

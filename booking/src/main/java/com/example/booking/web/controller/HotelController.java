@@ -58,6 +58,16 @@ public class HotelController {
                 .body(hotelMapper.hotelToResponse(newHotel));
     }
 
+    @PutMapping("/rating")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    public ResponseEntity<HotelResponse> updateHotelRating(@RequestParam UUID hotelId, @RequestParam int mark) {
+
+        Hotel hotelWithNewRating = hotelService.updateRating(hotelId, mark);
+        Hotel updatedHotel = hotelService.update(hotelId, hotelWithNewRating);
+
+        return ResponseEntity.ok(hotelMapper.hotelToResponse(updatedHotel));
+    }
+
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<HotelUpdateResponse> updateHotel(@RequestBody @Valid UpsertHotelUpdateRequest request,

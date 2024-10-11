@@ -1,6 +1,7 @@
 package com.example.booking.service.impl;
 
 import com.example.booking.entity.Hotel;
+import com.example.booking.exception.IncorrectMarkException;
 import com.example.booking.repository.HotelRepository;
 import com.example.booking.repository.HotelSpecification;
 import com.example.booking.service.AbstractEntityService;
@@ -22,6 +23,32 @@ public class HotelServiceImpl extends AbstractEntityService<Hotel, UUID, HotelRe
         super(repository);
     }
 
+    @Override
+    public Hotel updateRating(UUID hotelId, int newMark) {
+
+        Hotel hotel = repository.findById(hotelId).orElse(null);
+
+        if (newMark < 1 || newMark > 5) {
+            throw new IncorrectMarkException("You entered incorrect mark! Please enter mark 1-5!");
+        }
+
+        if (hotel != null) {
+
+            int numberOfRating = hotel.getNumberOFMarks();
+            double rating = hotel.getRating();
+            double totalRating = rating * numberOfRating;
+
+            totalRating = totalRating - rating + newMark;
+            rating = numberOfRating == 0 ? totalRating : totalRating / numberOfRating;
+
+            rating = Math.round(rating * 10) / 10.0;
+            numberOfRating++;
+
+            hotel.setRating(rating);
+            hotel.setNumberOFMarks(numberOfRating);
+        }
+        return hotel;
+    }
 
     @Override
     public Page<Hotel> filterBy(HotelsFilterRequest filter) {
@@ -45,6 +72,12 @@ public class HotelServiceImpl extends AbstractEntityService<Hotel, UUID, HotelRe
         }
         if (!Objects.equals(oldEntity.getCenterDistance(), newEntity.getCenterDistance())) {
             oldEntity.setCenterDistance(newEntity.getCenterDistance());
+        }
+        if (!Objects.equals(oldEntity.getRating(), newEntity.getRating())) {
+            oldEntity.setRating(newEntity.getRating());
+        }
+        if (!Objects.equals(oldEntity.getNumberOFMarks(), newEntity.getNumberOFMarks())) {
+            oldEntity.setNumberOFMarks(newEntity.getNumberOFMarks());
         }
         log.info("UpdateFields in hotel: " + oldEntity.getHotelName());
 

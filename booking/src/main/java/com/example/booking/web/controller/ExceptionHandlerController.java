@@ -2,6 +2,7 @@ package com.example.booking.web.controller;
 
 import com.example.booking.exception.AccessDeniedException;
 import com.example.booking.exception.AlreadyExistsException;
+import com.example.booking.exception.IncorrectMarkException;
 import com.example.booking.exception.WrongDatePeriodException;
 import com.example.booking.web.model.response.ErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
@@ -68,6 +69,14 @@ public class ExceptionHandlerController {
         log.error("Error trying to delete or update entity", ex);
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler(IncorrectMarkException.class)
+    public ResponseEntity<ErrorResponse> incorrectMark(IncorrectMarkException ex) {
+        log.error("Not allowed mark.", ex);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(ex.getMessage()));
     }
 }
