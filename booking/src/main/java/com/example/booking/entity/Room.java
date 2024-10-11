@@ -44,7 +44,7 @@ public class Room {
 
     private LocalDate busyTo;
 
-    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<UnavailableDates> unavailableDates = new ArrayList<>();
 
@@ -57,8 +57,13 @@ public class Room {
         bookings.add(booking);
     }
 
-    public void addUnavailableDates(UnavailableDates unavailableDates) {
-        unavailableDates.setRoom(this);
-        this.unavailableDates.add(unavailableDates);
+    public UnavailableDates addUnavailableDates() {
+        UnavailableDates unavailableDate = new UnavailableDates();
+        this.unavailableDates.add(unavailableDate);
+        return unavailableDate;
+    }
+
+    public void clearUnavailableDates(UnavailableDates unavailableDate) {
+      unavailableDates.remove(unavailableDate);
     }
 }

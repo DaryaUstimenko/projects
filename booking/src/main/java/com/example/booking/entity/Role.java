@@ -21,10 +21,4 @@ public class Role {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private User user;
-
-    public static Role from(RoleType type){
-        var role = new Role();
-        role.setAuthority(type);
-        return role;
-    }
 }

@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
 
@@ -39,6 +40,9 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
         if (!Objects.equals(oldEntity.getBusyTo(), newEntity.getBusyTo())) {
             oldEntity.setBusyTo(newEntity.getBusyTo());
         }
+        if (newEntity.getRoom() != null && !Objects.equals(oldEntity.getRoom(), newEntity.getRoom())) {
+            oldEntity.setRoom(newEntity.getRoom());
+        }
 
         log.info("UpdateFields in booking: " + oldEntity.getId());
 
@@ -51,29 +55,15 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
         User user = userService.findById(userId);
         Room room = roomService.findById(roomId);
 
-        Period period = Period.between(booking.getBusyFrom(), booking.getBusyTo());
-        if (period.getDays() < 0) {
-            throw new WrongDatePeriodException("You have entered a start date later " +
-                    "than the final booking date! Please changed it!");
-        }
-
-        boolean isDateAvailable = room.getUnavailableDates().stream().allMatch(d -> {
-            if (booking.getBusyFrom().isBefore(d.getBusyTo()) &&
-                    booking.getBusyTo().isAfter(d.getBusyFrom())) {
-                return false;
-            } else {
-                return true;
-            }
-        });
+        boolean isDateAvailable = isDateAvailable(room, booking.getBusyFrom(), booking.getBusyTo());
 
         if (isDateAvailable) {
 
-            UnavailableDates unavailableDate = new UnavailableDates();
-            unavailableDate.setBusyFrom(booking.getBusyFrom());
-            unavailableDate.setBusyTo(booking.getBusyTo());
-            unavailableDate.setRoom(room);
+            UnavailableDates unavailableDates = room.addUnavailableDates();
+            unavailableDates.setRoom(room);
+            unavailableDates.setBusyFrom(booking.getBusyFrom());
+            unavailableDates.setBusyTo(booking.getBusyTo());
 
-            room.addUnavailableDates(unavailableDate);
             room.addBooking(booking);
             user.addBooking(booking);
 
@@ -83,9 +73,6 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
         } else {
             throw new WrongDatePeriodException("Those dates are already booked!");
         }
-
-        log.info("Add booking for room: " + room.getName() + ". Now his room busy for duration: " +
-                period.getDays());
 
         log.info("Add booking for user: " + user.getUsername());
 
@@ -104,4 +91,35 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
         return update(id, booking);
     }
 
+    @Override
+    public void deleteBooking(UUID id) {
+        Booking booking = findById(id);
+        Room room = booking.getRoom();
+
+        List<UnavailableDates> datesToRemove = new ArrayList<>();
+
+        room.getUnavailableDates().forEach(unavailableDates -> {
+            if (unavailableDates.getBusyFrom().isEqual(booking.getBusyFrom()) &&
+            unavailableDates.getBusyTo().isEqual(booking.getBusyTo())) {
+                datesToRemove.add(unavailableDates);
+            }
+        });
+        datesToRemove.forEach(room::clearUnavailableDates);
+
+        deleteById(id);
+    }
+
+    private boolean isDateAvailable(Room room, LocalDate busyFrom, LocalDate busyTo) {
+        Period period = Period.between(busyFrom, busyTo);
+        if (period.getDays() < 0) {
+            throw new WrongDatePeriodException("You have entered a start date later " +
+                    "than the final booking date! Please changed it!");
+        }
+        log.info("Add booking for room: " + room.getName() + ". Now his room busy for duration: " +
+                period.getDays());
+
+        return room.getUnavailableDates().stream().
+                allMatch(d -> (!busyFrom.isBefore(d.getBusyTo()) || !busyTo.isAfter(d.getBusyFrom())) &&
+                                (!busyFrom.isEqual(d.getBusyFrom()) && !busyTo.isEqual(d.getBusyTo())));
+    }
 }

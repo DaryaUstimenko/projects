@@ -2,6 +2,7 @@ package com.example.booking.aop;
 
 import com.example.booking.entity.User;
 import com.example.booking.exception.AccessDeniedException;
+import com.example.booking.service.BookingService;
 import com.example.booking.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import java.util.stream.Stream;
 public class AuthorizationAspect {
 
     private final UserService userService;
+    private final BookingService bookingService;
 
     @Before("@annotation(authorizeAction)")
     public void checkAuthorization(JoinPoint joinPoint, AuthorizeAction authorizeAction) {
@@ -50,7 +52,8 @@ public class AuthorizationAspect {
 
         return Stream.of(
 
-                        attempt(() -> userService.findById(entityId))
+                        attempt(() -> userService.findById(entityId)),
+                        attempt(() -> bookingService.findById(entityId).getUser())
 
                 ).filter(Optional::isPresent)
 

@@ -1,12 +1,12 @@
 package com.example.booking.web.controller;
 
+import com.example.booking.aop.AuthorizeAction;
 import com.example.booking.entity.Booking;
 import com.example.booking.mapper.BookingMapper;
 import com.example.booking.service.BookingService;
 import com.example.booking.web.model.request.PaginationRequest;
 import com.example.booking.web.model.request.UpsertBookingRequest;
 import com.example.booking.web.model.response.BookingResponse;
-import com.example.booking.web.model.response.HotelResponse;
 import com.example.booking.web.model.response.ModelListResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,10 +39,12 @@ public class BookingController {
         );
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<BookingResponse> findById(@PathVariable UUID id) {
-//        return ResponseEntity.ok(bookingMapper.bookingToResponse(bookingService.findById(id)));
-//    }
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    @AuthorizeAction(actionType = "findById")
+    public ResponseEntity<BookingResponse> findById(@PathVariable UUID id) {
+        return ResponseEntity.ok(bookingMapper.bookingToResponse(bookingService.findById(id)));
+    }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
@@ -56,21 +58,24 @@ public class BookingController {
                 .body(bookingMapper.bookingToResponse(newBooking));
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<BookingResponse> updateBooking(@RequestBody @Valid UpsertBookingRequest request,
-//                                                         @PathVariable UUID id,
-//                                                         @RequestParam(required = false) UUID roomId,
-//                                                         @RequestParam(required = false) UUID userId) {
-//        Booking updatedBooking = bookingService.updateBooking(bookingMapper.upsertRequestToBooking(request),
-//                id, roomId, userId);
-//
-//        return ResponseEntity.ok(bookingMapper.bookingToResponse(updatedBooking));
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
-//        bookingService.deleteById(id);
-//
-//        return ResponseEntity.noContent().build();
-//    }
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    @AuthorizeAction(actionType = "update")
+    public ResponseEntity<BookingResponse> updateBooking(@PathVariable UUID id,
+                                                         @RequestBody @Valid UpsertBookingRequest request,
+                                                         @RequestParam(required = false) UUID roomId,
+                                                         @RequestParam(required = false) UUID userId) {
+        Booking updatedBooking = bookingService.updateBooking(bookingMapper.upsertRequestToBooking(request),
+                id, roomId, userId);
+
+        return ResponseEntity.ok(bookingMapper.bookingToResponse(updatedBooking));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    @AuthorizeAction(actionType = "delete")
+    public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
+        bookingService.deleteBooking(id);
+        return ResponseEntity.noContent().build();
+    }
 }
