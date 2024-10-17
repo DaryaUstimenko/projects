@@ -6,6 +6,7 @@ import com.example.booking.entity.User;
 import com.example.booking.exception.AlreadyExistsException;
 import com.example.booking.mapper.UserMapper;
 import com.example.booking.service.UserService;
+import com.example.booking.service.impl.KafkaEventService;
 import com.example.booking.web.model.request.PaginationRequest;
 import com.example.booking.web.model.request.UpsertUserRequest;
 import com.example.booking.web.model.response.ModelListResponse;
@@ -30,6 +31,8 @@ public class UserController {
     private final UserService userService;
 
     private final UserMapper userMapper;
+
+    private final KafkaEventService kafkaEventService;
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -68,8 +71,11 @@ public class UserController {
         User newUser = userMapper.upsertRequestToUser(request);
         newUser.addRole(role);
 
+        User savedUser = userService.save(newUser);
+        kafkaEventService.registrationEvent(savedUser.getId());
+
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(userMapper.userToResponse(userService.save(newUser)));
+                .body(userMapper.userToResponse(savedUser));
     }
 
     @PutMapping("/{id}")

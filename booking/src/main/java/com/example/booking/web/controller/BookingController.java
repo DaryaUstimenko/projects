@@ -4,6 +4,7 @@ import com.example.booking.aop.AuthorizeAction;
 import com.example.booking.entity.Booking;
 import com.example.booking.mapper.BookingMapper;
 import com.example.booking.service.BookingService;
+import com.example.booking.service.impl.KafkaEventService;
 import com.example.booking.web.model.request.PaginationRequest;
 import com.example.booking.web.model.request.UpsertBookingRequest;
 import com.example.booking.web.model.response.BookingResponse;
@@ -26,6 +27,8 @@ public class BookingController {
     private final BookingService bookingService;
 
     private final BookingMapper bookingMapper;
+
+    private final KafkaEventService kafkaEventService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -53,6 +56,8 @@ public class BookingController {
                                                          @RequestParam UUID userId) {
         Booking newBooking = bookingService.addBooking(bookingMapper.upsertRequestToBooking(request),
                 roomId, userId);
+
+        kafkaEventService.bookingEvent(newBooking);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(bookingMapper.bookingToResponse(newBooking));

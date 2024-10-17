@@ -1,6 +1,8 @@
 #server:
 #  port: 8082
 spring:
+  kafka:
+    bootstrap-servers: localhost:9092
   jpa:
     generate-ddl: true
   datasource:
@@ -11,3 +13,13 @@ spring:
       schema: hotels_schema
       connection-init-sql: CREATE SCHEMA IF NOT EXISTS hotels_schema
       connection-timeout: 10000
+
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:27017/statistics?authSource=admin
+
+app:
+  kafka:
+    kafkaMessageTopic1: "registration-topic"
+    kafkaMessageTopic2: "booking-topic"
+    kafkaMessageGroupId: "kafka-statistics-group-id"
