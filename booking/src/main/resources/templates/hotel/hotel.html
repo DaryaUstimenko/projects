@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Hotel</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+          integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7+wl+Q=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script src="/script/script.js"></script>
+</head>
+<body>
+<div class="container-fluid mt-7">
+    <div style="text-align: center;">
+        <a th:href="@{/api/v1/hotel/filter}" class="btn btn-secondary float-left">На главную</a>
+        <a th:href="@{/api/v1/user/profile}" class="btn btn-dark float-right">Личный кабинет</a>
+    </div>
+    <form th:action="@{/api/v1/hotel/{id}(id=${hotel.id})}" method="get">
+        <br>
+        <br>
+        <h1 style="text-align: center;">Отель</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Имя</th>
+                <th>Заголовок</th>
+                <th style="text-align: center;">Город</th>
+                <th style="text-align: center;">Адрес</th>
+                <th style="text-align: center;">Расстояние до центра</th>
+                <th>Комнаты</th>
+                <th>Рейтинг</th>
+                <th style="text-align: center;">Количество оценок</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:text="${hotel.id}"></td>
+                <td th:text="${hotel.hotelName}"></td>
+                <td th:text="${hotel.title}"></td>
+                <td th:text="${hotel.city}"></td>
+                <td th:text="${hotel.address}"></td>
+                <td style="text-align: center;" th:text="${hotel.centerDistance}"></td>
+                <td>
+                    <a th:href="@{/api/v1/room/filter?hotelId={id}(id=${hotel.id})}">Комнаты</a>
+                </td>
+                <td style="text-align: center;" th:text="${hotel.rating}"></td>
+                <td style="text-align: center;" th:text="${hotel.numberOFMarks}"></td>
+                <div sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/api/v1/hotel/update/{id}(id=${hotel.id})}" class="btn btn-primary">Изменить</a>
+                    <a th:href="@{/api/v1/hotel/delete/{id}(id=${hotel.id})}" class="btn btn-danger">Удалить</a>
+                </div>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+<form class="d-flex align-items-center" method="post" th:action="@{/api/v1/hotel/rating(hotelId=${hotel.id})}">
+    <input type="hidden" name="mark" id="markInput" value="0">
+    <div class="rating-area">
+        <input type="radio" id="star-5" name="rating" value="5" onclick="setMark(5)">
+        <label for="star-5" title="Оценка «5»"></label>
+        <input type="radio" id="star-4" name="rating" value="4" onclick="setMark(4)">
+        <label for="star-4" title="Оценка «4»"></label>
+        <input type="radio" id="star-3" name="rating" value="3" onclick="setMark(3)">
+        <label for="star-3" title="Оценка «3»"></label>
+        <input type="radio" id="star-2" name="rating" value="2" onclick="setMark(2)">
+        <label for="star-2" title="Оценка «2»"></label>
+        <input type="radio" id="star-1" name="rating" value="1" onclick="setMark(1)">
+        <label for="star-1" title="Оценка «1»"></label>
+        <br>
+        <button class="btn btn-primary" style="margin-left: 50px;" type="submit">Отправить оценку</button>
+    </div>
+</form>
+</body>
+</html>

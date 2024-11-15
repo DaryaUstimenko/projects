@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Create room</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+</head>
+
+<body>
+<div class="container mt-7">
+    <div style="text-align: center;">
+        <a th:href="@{/api/v1/hotel/filter}" class="btn btn-secondary float-left">На главную</a>
+        <a th:href="@{/api/v1/user/profile}" class="btn btn-dark float-right">Личный кабинет</a>
+    </div>
+<div class="d-flex align-items-center justify-content-center min-vh-100">
+    <div>
+        <br>
+        <h1 style="text-align: center;">Создать комнату</h1>
+        <form method="POST" th:action="@{/api/v1/room/create}" style="text-align: center;">
+            <input type="hidden" name="id" th:value="${room?.id}">
+            <div>
+                <br><label>Название комнаты:</label>
+                <br><input class="border border-dark" type="text" th:field="${room.name}">
+                <br><span class="text-danger" th:if="${#fields.hasErrors('room.name')}"
+                          th:errors="*{room.name}"></span>
+            </div>
+            <div>
+                <br><label>Описание:</label>
+                <br><input class="border border-dark" type="text" th:field="${room.description}">
+                <br><span class="text-danger" th:if="${#fields.hasErrors('room.description')}"
+                          th:errors="*{room.description}"></span>
+            </div>
+            <div>
+                <br><label for="hotelId">ID отеля:</label>
+                <br><input name="hotelId" id="hotelId" class="border border-dark" type="text">
+            </div>
+            <div>
+                <br><label>Номер:</label>
+                <br><input class="border border-dark" type="number" th:field="${room.number}">
+                <br><span class="text-danger" th:if="${#fields.hasErrors('room.number')}"
+                          th:errors="*{room.number}"></span>
+            </div>
+            <div>
+                <br><label>Цена:</label>
+                <br><input class="border border-dark" type="number" th:field="${room.price}">
+                <br><span class="text-danger" th:if="${#fields.hasErrors('room.price')}"
+                          th:errors="*{room.price}"></span>
+            </div>
+            <div>
+                <br><label>Максимальное число гостей:</label>
+                <br><input class="border border-dark" type="number" th:field="${room.maxCountGuests}">
+                <br><span class="text-danger" th:if="${#fields.hasErrors('room.maxCountGuests')}"
+                          th:errors="*{room.maxCountGuests}"></span>
+                <br>
+                <button class="btn btn-secondary mt-4" type="submit">Добавить</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+</body>
+</html>

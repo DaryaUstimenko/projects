@@ -1,4 +1,4 @@
-package com.example.booking.web.controller;
+package com.example.booking.web.controller.v1;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+</head>
+<body>
+<div class="container-login ">
+    <div class="d-flex align-items-center justify-content-center min-vh-100">
+        <div class="body ">
+            <h2 style="text-align: center;">Вход</h2>
+            <div class="form" style="text-align: center;">
+                <a th:href="@{/api/v1/user/create}" class="btn btn-secondary">Зарегистрироваться</a>
+                <form th:action="@{/login}" method="post">
+                    <p class="fw-normal text-primary" style="text-align: center;">Пожалуйста, авторизуйтесь</p>
+                    <div class="text-danger" th:if="${param.error}">
+                        Неверный логин или пароль
+                    </div>
+                    <div th:if="${param.logout}">
+                        Вы вышли из системы.
+                    </div>
+                    <div style="text-align: center;">
+                        <label>Логин:</label>
+                        <br><input class="border border-secondary" type="text" name="username">
+                    </div>
+                    <div style="text-align: center;">
+                        <br><label>Пароль:</label>
+                        <br><input class="border border-secondary" type="password" name="password">
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="btn btn-secondary mt-4" type="submit">Войти</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

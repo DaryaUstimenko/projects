@@ -1,4 +1,4 @@
-package com.example.booking.web.controller;
+package com.example.booking.web.controller.v1;
 
 import com.example.booking.aop.AuthorizeAction;
 import com.example.booking.entity.RoleType;
@@ -6,7 +6,7 @@ import com.example.booking.entity.User;
 import com.example.booking.exception.AlreadyExistsException;
 import com.example.booking.mapper.UserMapper;
 import com.example.booking.service.UserService;
-import com.example.booking.service.impl.KafkaEventService;
+import com.example.booking.service.KafkaEventService;
 import com.example.booking.web.model.request.PaginationRequest;
 import com.example.booking.web.model.request.UpsertUserRequest;
 import com.example.booking.web.model.response.ModelListResponse;
@@ -59,7 +59,7 @@ public class UserController {
         return ResponseEntity.ok(userMapper.userToResponse(userService.findByUsername(username)));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<UserResponse> createUser(@RequestBody UpsertUserRequest request,
                                                    @RequestParam RoleType role) {
         if (userService.existsByEmail(request.getEmail())) {
@@ -78,7 +78,7 @@ public class UserController {
                 .body(userMapper.userToResponse(savedUser));
     }
 
-    @PutMapping("/{id}")
+    @PostMapping("/update/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @AuthorizeAction(actionType = "update")
     public ResponseEntity<UserUpdateResponse> updateUser(@PathVariable UUID id, @RequestBody UpsertUserRequest request) {
@@ -87,7 +87,7 @@ public class UserController {
         return ResponseEntity.ok(userMapper.userUpdateToResponse(updatedUser));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @AuthorizeAction(actionType = "delete")
     public ResponseEntity<Void> deleteById(@PathVariable UUID id) {

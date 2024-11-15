@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+</head>
+<body>
+<div class="container mt-7">
+    <div>
+        <a th:href="@{/api/v1/hotel/filter}" class="btn btn-secondary">На главную</a>
+    </div>
+    <h1 style="text-align: center;">Пользователь</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Имя</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.email}"></td>
+        <td>
+            <a th:href="@{/api/v1/user/update/{id}(id=${user.id})}" class="btn btn-primary">Изменить</a>
+            <a th:href="@{/api/v1/user/delete/{id}(id=${user.id})}" class="btn btn-danger">Удалить</a>
+        </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="mt-1">
+        <a th:href="@{/api/v1/user/booking}" class="btn btn-dark">Заказы</a>
+    </div>
+</div>
+</body>
+</html>

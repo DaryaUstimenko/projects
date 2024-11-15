@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>All Hotels</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+</head>
+<body>
+
+<div class="container mt-7">
+    <div style="text-align: center;">
+        <a th:href="@{/api/v1/room/filter}" class="btn btn-secondary float-left">Поиск комнат</a>
+        <a th:href="@{/api/v1/user/profile}" class="btn btn-dark float-right">Личный кабинет</a>
+    </div>
+    <div>
+        <form th:action="@{/api/v1/hotel/filter}" method="get">
+            <br>
+            <h1 style="text-align: center;">Поиск отелей</h1>
+            <div class="row container mt-7">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>ID отеля:</label>
+                        <br><input class="border border-primary" type="text" th:field="${filter.id}">
+                        <span th:if="${#fields.hasErrors('filter.id')}"
+                              th:errors="*{filter.id}"></span>
+
+                        <label>Название отеля:</label>
+                        <br><input class="border border-primary" type="text" th:field="${filter.hotelName}">
+                        <span th:if="${#fields.hasErrors('filter.hotelName')}"
+                              th:errors="*{filter.hotelName}"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Город:</label>
+                        <br><input class="border border-primary" type="text" th:field="${filter.city}">
+                        <span th:if="${#fields.hasErrors('filter.city')}" th:errors="*{filter.city}"></span>
+
+                        <label>Заголовок отеля:</label>
+                        <br><input class="border border-primary" type="text" th:field="${filter.title}">
+                        <span th:if="${#fields.hasErrors('filter.title')}"
+                              th:errors="*{filter.title}"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Адрес:</label>
+                        <br><input class="border border-primary" type="text" th:field="${filter.address}">
+                        <span th:if="${#fields.hasErrors('filter.address')}"
+                              th:errors="*{filter.address}"></span>
+
+                        <label>Расстояние до центра:</label>
+                        <br><input class="border border-primary" type="text"
+                                   th:field="${filter.centerDistance}">
+                        <span th:if="${#fields.hasErrors('filter.centerDistance')}"
+                              th:errors="*{filter.centerDistance}"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Рейтинг:</label>
+                        <br><input class="border border-primary" type="text" th:field="${filter.rating}">
+                        <span th:if="${#fields.hasErrors('filter.rating')}"
+                              th:errors="*{filter.rating}"></span>
+
+                        <label>Количество оценок:</label>
+                        <br><input class="border border-primary" type="text"
+                                   th:field="${filter.numberOFMarks}">
+                        <span th:if="${#fields.hasErrors('filter.numberOFMarks')}"
+                              th:errors="*{filter.numberOFMarks}"></span>
+                        <br>
+                        <div class="col-md-9">
+                            <button type="submit" class="btn btn-dark mt-4">Найти отель</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <table class="table table-striped">
+        <h1 class="mb-4" style="text-align: center;">Отели</h1>
+        <thead>
+
+        <th>ID</th>
+        <th>Имя</th>
+        <th>Заголовок</th>
+        <th style="text-align: center;">Город</th>
+        <th style="text-align: center;">Адрес</th>
+        <th style="text-align: center;">Расстояние до центра</th>
+        <th>Комнаты</th>
+        <th>Рейтинг</th>
+        <th style="text-align: center;">Количество оценок</th>
+
+        </thead>
+        <tbody>
+
+        <tr th:each="hotel : ${hotels}">
+            <td>
+                <a th:href="@{/api/v1/hotel/{id}(id=${hotel.id})}" th:text="${hotel.id}"></a>
+            </td>
+            <td th:text="${hotel.hotelName}"></td>
+            <td th:text="${hotel.title}"></td>
+            <td th:text="${hotel.city}"></td>
+            <td th:text="${hotel.address}"></td>
+            <td style="text-align: center;" th:text="${hotel.centerDistance}"></td>
+            <td>
+                <a th:href="@{/api/v1/room/filter?hotelId={id}(id=${hotel.id})}">Комнаты</a>
+            </td>
+            <td style="text-align: center;" th:text="${hotel.rating}"></td>
+            <td style="text-align: center;" th:text="${hotel.numberOFMarks}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="pageSize">Размер страницы</label>
+            <input type="number" class="form-control" id="pageSize" name="pageSize"
+                   th:value="${pageSize}" min="10" th:max="${max}">
+        </div>
+        <div class="form-group col-md-3">
+            <label for="pageNumber">Номер страницы</label>
+            <input type="number" class="form-control" id="pageNumber" name="pageNumber"
+                   th:value="${pageNumber}" min="0" th:max="${max}">
+        </div>
+        <div class="col-md-3 mt-2">
+            <button type="submit" class="btn btn-secondary mt-4">Применить</button>
+        </div>
+    </div>
+    <div sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/api/v1/hotel/create}" class="btn btn-dark mt-4">Создать новый отель</a>
+    </div>
+</div>
+</body>
+</html>

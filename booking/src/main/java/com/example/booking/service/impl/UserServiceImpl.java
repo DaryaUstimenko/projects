@@ -73,6 +73,10 @@ public class UserServiceImpl extends AbstractEntityService<User, UUID, UserRepos
         } else if (!Objects.equals(oldEntity.getEmail(), newEntity.getEmail())) {
             oldEntity.setEmail(newEntity.getEmail());
         }
+
+        if (!Objects.equals(oldEntity.getPassword(), passwordEncoder.encode(newEntity.getPassword()))) {
+            oldEntity.setPassword(passwordEncoder.encode(newEntity.getPassword()));
+        }
         log.info("UpdateFields for user: " + oldEntity.getUsername());
 
         return oldEntity;

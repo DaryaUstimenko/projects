@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update booking</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+    <script src="/script/script.js"></script>
+</head>
+<body>
+<div class="container mt-7">
+    <div style="text-align: center;">
+        <a th:href="@{/api/v1/hotel/filter}" class="btn btn-secondary float-left">На главную</a>
+        <a th:href="@{/api/v1/user/profile}" class="btn btn-dark float-right">Личный кабинет</a>
+    </div>
+<div class="d-flex align-items-center justify-content-center min-vh-100">
+    <div>
+        <h1 style="text-align: center;">Изменить заказ</h1>
+        <form style="text-align: center;" th:action="@{/api/v1/booking/update/{id}(id=${booking.id})}" method="post">
+            <input type="hidden" name="id" th:value="${booking?.id}">
+            <div>
+                <br><label class="text-primary">Ведите новую дату заезда или оставте без изменений</label>
+                <br><input type="date" th:field="${booking.busyFrom}">
+            </div>
+            <div>
+                <br><label class="text-primary">Ведите новую дату выезда или оставте без изменений</label>
+                <br><input type="date" th:field="${booking.busyTo}">
+            </div>
+            <div>
+                <br><label class="text-primary" for="roomId">ID новой комнаты:</label>
+                <br><input class="border border-dark" type="" placeholder="Оставте поле пустым, если комнату не меняете"
+                           size="43" name="roomId" id="roomId">
+            </div>
+            <button class="btn btn-secondary mt-4" type="submit">Обновить</button>
+        </form>
+    </div>
+</div>
+</div>
+</body>
+</html>

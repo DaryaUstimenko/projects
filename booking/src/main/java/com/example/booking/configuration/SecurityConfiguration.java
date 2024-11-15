@@ -3,7 +3,6 @@ package com.example.booking.configuration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -48,13 +47,29 @@ public class SecurityConfiguration {
         http
                 .authorizeHttpRequests((auth) ->
                         auth
-                                .requestMatchers(HttpMethod.POST, "/api/v1/user/**").permitAll()
+                                .requestMatchers("/api/v1/user/create").permitAll()
+                                .requestMatchers("/api/v1/user/success").permitAll()
+                                .requestMatchers("/login").permitAll()
                                 .anyRequest().authenticated()
+                )
+                .formLogin(formLogin ->
+                        formLogin
+                                .loginPage("/login")
+                                .loginProcessingUrl("/login")
+                                .defaultSuccessUrl("/api/v1/user/profile", true)
+                                .failureUrl("/login?error")
+                )
+                .logout(logout ->
+                        logout
+                                .logoutUrl("/logout")
+                                .logoutSuccessUrl("/api/v1/user/logout")
+                                .invalidateHttpSession(true)
+                                .deleteCookies("JSESSIONID")
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(httpSecuritySessionManagementConfigure ->
-                        httpSecuritySessionManagementConfigure.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        httpSecuritySessionManagementConfigure.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authenticationManager(authenticationManager);
         return http.build();
     }

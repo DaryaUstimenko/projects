@@ -1,9 +1,6 @@
 package com.example.booking.web.controller;
 
-import com.example.booking.exception.AccessDeniedException;
-import com.example.booking.exception.AlreadyExistsException;
-import com.example.booking.exception.IncorrectMarkException;
-import com.example.booking.exception.WrongDatePeriodException;
+import com.example.booking.exception.*;
 import com.example.booking.web.model.response.ErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +37,14 @@ public class ExceptionHandlerController {
     @ExceptionHandler(WrongDatePeriodException.class)
     public ResponseEntity<ErrorResponse> wrongDatePeriod(WrongDatePeriodException ex) {
         log.error("Not allowed period of dates.", ex);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler(AlreadyDateBusyException.class)
+    public ResponseEntity<ErrorResponse> alreadyDateBusy(AlreadyDateBusyException ex) {
+        log.error("This dates are busy:", ex);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(ex.getMessage()));

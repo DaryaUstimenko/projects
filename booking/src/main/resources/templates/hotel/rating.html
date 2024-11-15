@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hotel</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+    <script src="/script/script.js"></script>
+</head>
+<body>
+<div class="container mt-7">
+    <div style="text-align: center;">
+        <a th:href="@{/api/v1/hotel/filter}" class="btn btn-secondary float-left">На главную</a>
+        <a th:href="@{/api/v1/hotel/{id}(id=${hotel.id})}" class="btn btn-dark float-right">На страницу отеля</a>
+    </div>
+    <div class="d-flex align-items-center justify-content-center min-vh-100">
+        <h3 class="border border-dark">Спасибо за вашу оценку!</h3>
+    </div>
+</div>
+</body>
+</html>

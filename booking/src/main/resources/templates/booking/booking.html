@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+</head>
+<body>
+<div class="container-fluid mt-7">
+    <div style="text-align: center;">
+        <a th:href="@{/api/v1/hotel/filter}" class="btn btn-secondary float-left">На главную</a>
+        <a th:href="@{/api/v1/user/profile}" class="btn btn-dark float-right">Личный кабинет</a>
+    </div>
+    <form th:action="@{/api/v1/booking/{id}(id=${booking.id})}" method="get">
+        <br>
+        <br>
+        <h1 style="text-align: center;">Заказ</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Дата заезда</th>
+                <th>Дата выезда</th>
+                <th>Информация о заказе</th>
+                <th style="text-align: center; ">Комната</th>
+                <th style="text-align: center;">Заказчик</th>
+            </tr>
+            </thead>
+            <tbody>
+            <td style="max-width: 150px;">
+                <a th:href="@{/api/v1/booking/{id}(id=${booking.id})}" th:text="${booking.id}"></a>
+            </td>
+            <td th:text="${booking.busyFrom}"></td>
+            <td th:text="${booking.busyTo}"></td>
+            <td th:text="${booking.bookingInfo}"></td>
+            <td style="min-width: 100px;">
+                <a th:href="@{/api/v1/room/{id}(id=${booking.room.id})}" th:text="${booking.room.name}"></a>
+            </td>
+            <td>
+                <a th:href="@{/api/v1/user/{id}(id=${booking.user.id})}" th:text="${booking.user.username}"></a>
+            </td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <a th:href="@{/api/v1/booking/update/{id}(id=${booking.id})}" class="btn btn-primary">Изменить</a>
+            <a th:href="@{/api/v1/booking/delete/{id}(id=${booking.id})}" class="btn btn-danger">Удалить</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

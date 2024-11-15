@@ -4,7 +4,7 @@ import com.example.booking.entity.BookingEvent;
 import com.example.booking.entity.RegistrationEvent;
 import com.example.booking.repository.BookingEventRepository;
 import com.example.booking.repository.RegistrationEventRepository;
-import com.example.booking.service.impl.StatisticsSavingService;
+import com.example.booking.service.StatisticsSavingService;
 import com.example.booking.web.model.response.BookingModelEvent;
 import com.example.booking.web.model.response.RegistrationModelEvent;
 import lombok.RequiredArgsConstructor;

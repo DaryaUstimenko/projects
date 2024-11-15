@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create user</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+</head>
+<body>
+<div class="d-flex align-items-center justify-content-center min-vh-100">
+    <div style="text-align: center;">
+        <h1 class="text-dark">Регистрация</h1>
+        <form method="POST" th:action="@{/api/v1/user/create}">
+            <input type="hidden" name="id" th:value="${user?.id}">
+            <div>
+                <label for="role">Role:</label>
+                <select name="role" id="role">
+                    <option value="ROLE_USER">User</option>
+                    <option value="ROLE_ADMIN">Admin</option>
+                </select>
+            </div>
+            <div>
+                <label>Имя:</label>
+                <br><input type="text" required th:field="${user.username}">
+                <span th:if="${#fields.hasErrors('user.username')}" th:errorclass="error"
+                      th:errors="*{user.username}"></span>
+            </div>
+            <div>
+                <label>Пароль:</label>
+                <br><input type="text" required th:field="${user.password}">
+                <span th:if="${#fields.hasErrors('user.password')}" th:errors="*{user.password}"></span>
+            </div>
+            <div>
+                <label>Email:</label>
+                <br><input type="email" required th:field="${user.email}">
+                <span th:if="${#fields.hasErrors('user.email')}" th:errors="*{user.email}"></span>
+
+            </div>
+            <button class="btn btn-secondary mt-4" type="submit">Сохранить</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

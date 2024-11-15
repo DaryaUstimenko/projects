@@ -1,0 +1,6 @@
+RegistrationEvent: 
+1. UserId: c4f77764-9b48-4d16-baed-65cb0339000b,
+2. UserId: 968eb856-52dd-4f5b-8846-2cc564a82165,
+BookingEvent: 
+1. UserId: c4f77764-9b48-4d16-baed-65cb0339000b Booking: Check-in: 2024-11-23 Check-out: 2024-11-30,
+2. UserId: 968eb856-52dd-4f5b-8846-2cc564a82165 Booking: Check-in: 2024-11-22 Check-out: 2024-11-23,

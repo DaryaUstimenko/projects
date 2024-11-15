@@ -1,13 +1,11 @@
-package com.example.booking.web.controller;
+package com.example.booking.web.controller.v1;
 
-import com.example.booking.entity.Hotel;
 import com.example.booking.entity.Room;
 import com.example.booking.mapper.RoomMapper;
 import com.example.booking.service.RoomService;
 import com.example.booking.web.model.request.PaginationRequest;
 import com.example.booking.web.model.request.RoomsFilterRequest;
 import com.example.booking.web.model.request.UpsertRoomRequest;
-import com.example.booking.web.model.response.HotelResponse;
 import com.example.booking.web.model.response.ModelListResponse;
 import com.example.booking.web.model.response.RoomResponse;
 import jakarta.validation.Valid;
@@ -50,27 +48,27 @@ public class RoomController {
         return ResponseEntity.ok(roomMapper.roomToResponse(roomService.findById(id)));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<RoomResponse> createRoom(@RequestBody @Valid UpsertRoomRequest request,
-                                                   @RequestParam UUID hotelId) {
+    public ResponseEntity<RoomResponse> createRoom(@RequestParam(required = false) UUID hotelId,
+                                                   @RequestBody @Valid UpsertRoomRequest request) {
         Room newRoom = roomService.addRoom(roomMapper.upsertRequestToRoom(request), hotelId);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(roomMapper.roomToResponse(newRoom));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<RoomResponse> updateRoom(@RequestBody @Valid UpsertRoomRequest request,
-                                                   @PathVariable UUID id,
-                                                   @RequestParam(required = false) UUID hotelId) {
+    public ResponseEntity<RoomResponse> updateRoom( @PathVariable UUID id,
+                                                    @RequestParam(required = false) UUID hotelId,
+                                                    @RequestBody @Valid UpsertRoomRequest request) {
         Room updatedRoom = roomService.updateRoom(roomMapper.upsertRequestToRoom(request), id, hotelId);
 
         return ResponseEntity.ok(roomMapper.roomToResponse(updatedRoom));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
         roomService.deleteById(id);

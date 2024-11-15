@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update user</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+</head>
+<body>
+<div class="container mt-7">
+    <div>
+        <a th:href="@{/api/v1/hotel/filter}" class="btn btn-secondary">На главную</a>
+    </div>
+</div>
+<div class="d-flex align-items-center justify-content-center min-vh-100">
+    <div style="text-align: center;">
+        <h1>Обновить пользователя</h1>
+        <form th:action="@{/api/v1/user/update/{id}(id=${user.id})}" method="post">
+            <input type="hidden" name="id" th:value="${user?.id}">
+            <div>
+                <label for="username">Имя:</label>
+                <br><input type="text" id="username" name="username" required th:field="${user.username}">
+                <span th:if="${#fields.hasErrors('user.username')}" th:errorclass="error"
+                      th:errors="*{user.username}"></span>
+            </div>
+            <div>
+                <label for="email">Email:</label>
+                <br><input type="email" id="email" name="email" required th:field="${user.email}">
+                <span th:if="${#fields.hasErrors('user.email')}" th:errors="*{user.email}"></span>
+            </div>
+            <div>
+                <label>Пароль:</label>
+                <br><input type="password" placeholder="введите новый пароль" th:field="${user.password}">
+                <span th:if="${#fields.hasErrors('user.password')}" th:errors="*{user.password}"></span>
+            </div>
+            <br><button class="btn btn-secondary mt-4" type="submit">Обновить</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

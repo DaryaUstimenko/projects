@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update room</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+</head>
+<body>
+<div class="d-flex align-items-center justify-content-center min-vh-100">
+    <div>
+        <h1>Изменить комнату</h1>
+        <form method="POST" th:action="@{/api/v1/room/update/{id}(id=${room.id})}" style="text-align: center;">
+            <input type="hidden" name="id" th:value="${room?.id}">
+            <div class="form-group">
+                <label>Название комнаты:</label>
+                <br><input class="border border-dark" type="text" th:field="${room.name}">
+                <br><span class="text-danger" th:if="${#fields.hasErrors('room.name')}"
+                          th:errors="*{room.name}"></span>
+            </div>
+            <div>
+                <label>Описание:</label>
+                <br><input class="border border-dark" type="text" th:field="${room.description}">
+                <br><span class="text-danger" th:if="${#fields.hasErrors('room.description')}"
+                          th:errors="*{room.description}"></span>
+            </div>
+            <div>
+                <label>Номер:</label>
+                <br><input class="border border-dark" style="text-align: center;" type="number" th:field="${room.number}">
+                <br><span class="text-danger" th:if="${#fields.hasErrors('room.number')}"
+                          th:errors="*{room.number}"></span>
+            </div>
+            <div>
+                <label>Цена:</label>
+                <br><input class="border border-dark" style="text-align: center;" type="number" th:field="${room.price}">
+                <br><span class="text-danger" th:if="${#fields.hasErrors('room.price')}"
+                          th:errors="*{room.price}"></span>
+            </div>
+            <div>
+                <label>Максимальное число гостей:</label>
+                <br><input class="border border-dark" style="text-align: center;" type="number"
+                           th:field="${room.maxCountGuests}">
+                <br><span class="text-danger" th:if="${#fields.hasErrors('room.maxCountGuests')}"
+                          th:errors="*{room.maxCountGuests}"></span>
+            </div>
+            <button class="btn btn-secondary mt-4" type="submit">Обновить</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -4,13 +4,18 @@ import com.example.booking.entity.Booking;
 import com.example.booking.entity.Room;
 import com.example.booking.entity.UnavailableDates;
 import com.example.booking.entity.User;
+import com.example.booking.exception.AlreadyDateBusyException;
 import com.example.booking.exception.WrongDatePeriodException;
 import com.example.booking.repository.BookingRepository;
 import com.example.booking.service.AbstractEntityService;
 import com.example.booking.service.BookingService;
 import com.example.booking.service.RoomService;
 import com.example.booking.service.UserService;
+import com.example.booking.web.model.response.ErrorResponse;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,13 +39,17 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
 
     @Override
     protected Booking updateFields(Booking oldEntity, Booking newEntity) {
-        if (!Objects.equals(oldEntity.getBusyFrom(), newEntity.getBusyFrom())) {
+        if (newEntity.getBusyFrom() != null && !Objects.equals(oldEntity.getBusyFrom(), newEntity.getBusyFrom())) {
             oldEntity.setBusyFrom(newEntity.getBusyFrom());
+        } else if (newEntity.getBusyFrom() == null) {
+            newEntity.setBusyFrom(oldEntity.getBusyFrom());
         }
-        if (!Objects.equals(oldEntity.getBusyTo(), newEntity.getBusyTo())) {
+        if (newEntity.getBusyTo() != null && !Objects.equals(oldEntity.getBusyTo(), newEntity.getBusyTo())) {
             oldEntity.setBusyTo(newEntity.getBusyTo());
+        } else if (newEntity.getBusyTo() == null) {
+            newEntity.setBusyTo(oldEntity.getBusyTo());
         }
-        if (newEntity.getRoom() != null && !Objects.equals(oldEntity.getRoom(), newEntity.getRoom())) {
+        if (!Objects.equals(oldEntity.getRoom(), newEntity.getRoom())) {
             oldEntity.setRoom(newEntity.getRoom());
         }
 
@@ -59,11 +68,7 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
 
         if (isDateAvailable) {
 
-            UnavailableDates unavailableDates = room.addUnavailableDates();
-            unavailableDates.setRoom(room);
-            unavailableDates.setBusyFrom(booking.getBusyFrom());
-            unavailableDates.setBusyTo(booking.getBusyTo());
-
+            addUnavailableDates(room, booking);
             room.addBooking(booking);
             user.addBooking(booking);
 
@@ -71,7 +76,7 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
                     " to: " + booking.getBusyTo() +
                     " at the hotel: " + room.getHotel().getHotelName().toUpperCase(Locale.ROOT));
         } else {
-            throw new WrongDatePeriodException("Those dates are already booked!");
+            throw new AlreadyDateBusyException("Dates are busy");
         }
 
         log.info("Add booking for user: " + user.getUsername());
@@ -81,10 +86,19 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
 
     @Override
     @Transactional
-    public Booking updateBooking(Booking booking, UUID id, UUID roomId, UUID userId) {
-        if (roomId != null) {
-            Room room = roomService.findById(roomId);
-            booking.setRoom(room);
+    public Booking updateBooking(Booking booking, UUID id, UUID roomId) {
+        Optional<Booking> bookingToUpdate = repository.findById(id);
+        if (bookingToUpdate.isPresent()) {
+            Room room = bookingToUpdate.get().getRoom();
+
+            if (roomId != null) {
+                booking.setRoom(roomService.findById(roomId));
+            } else {
+                booking.setRoom(bookingToUpdate.get().getRoom());
+            }
+            Booking newBooking = updateFields(bookingToUpdate.get(), booking);
+            clearUnavailableDates(room, bookingToUpdate.get());
+            addUnavailableDates(room, newBooking);
         }
         log.info("Update booking: " + booking.getId());
 
@@ -92,19 +106,12 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
     }
 
     @Override
+    @Transactional
     public void deleteBooking(UUID id) {
         Booking booking = findById(id);
         Room room = booking.getRoom();
 
-        List<UnavailableDates> datesToRemove = new ArrayList<>();
-
-        room.getUnavailableDates().forEach(unavailableDates -> {
-            if (unavailableDates.getBusyFrom().isEqual(booking.getBusyFrom()) &&
-            unavailableDates.getBusyTo().isEqual(booking.getBusyTo())) {
-                datesToRemove.add(unavailableDates);
-            }
-        });
-        datesToRemove.forEach(room::clearUnavailableDates);
+        clearUnavailableDates(room, booking);
 
         deleteById(id);
     }
@@ -120,6 +127,30 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
 
         return room.getUnavailableDates().stream().
                 allMatch(d -> (!busyFrom.isBefore(d.getBusyTo()) || !busyTo.isAfter(d.getBusyFrom())) &&
-                                (!busyFrom.isEqual(d.getBusyFrom()) && !busyTo.isEqual(d.getBusyTo())));
+                        (!busyFrom.isEqual(d.getBusyFrom()) && !busyTo.isEqual(d.getBusyTo())));
+    }
+
+    private void addUnavailableDates(Room room, Booking booking) {
+        UnavailableDates unavailableDates = room.addUnavailableDates();
+        unavailableDates.setRoom(room);
+        unavailableDates.setBusyFrom(booking.getBusyFrom());
+        unavailableDates.setBusyTo(booking.getBusyTo());
+    }
+
+    private void clearUnavailableDates(Room room, Booking booking) {
+        List<UnavailableDates> datesToRemove = new ArrayList<>();
+
+        room.getUnavailableDates().forEach(unavailableDates -> {
+            if (unavailableDates.getBusyFrom().isEqual(booking.getBusyFrom()) &&
+                    unavailableDates.getBusyTo().isEqual(booking.getBusyTo())) {
+                datesToRemove.add(unavailableDates);
+            }
+        });
+        datesToRemove.forEach(room::clearUnavailableDates);
+    }
+
+    @Override
+    public Page<Booking> findAllByUser(User user, Pageable pageable) {
+        return repository.findAllByUser(user, pageable);
     }
 }

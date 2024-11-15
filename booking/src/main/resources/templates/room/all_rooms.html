@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>All Rooms</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+</head>
+<body>
+
+<div class="container mt-7">
+    <div style="text-align: center;">
+        <a th:href="@{/api/v1/hotel/filter}" class="btn btn-secondary float-left">На главную</a>
+        <a th:href="@{/api/v1/user/profile}" class="btn btn-dark float-right">Личный кабинет</a>
+    </div>
+
+    <form th:action="@{/api/v1/room/filter}" method="get">
+        <br>
+        <h1 style="text-align: center;">Поиск комнат</h1>
+        <div class="row container mt-7">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>ID комнаты:</label>
+                    <br><input class="border border-dark" type="text" th:field="${filter.id}">
+                    <span th:if="${#fields.hasErrors('filter.id')}"
+                          th:errors="*{filter.id}"></span>
+
+                    <label>Описание:</label>
+                    <br><input class="border border-dark" type="text" th:field="${filter.description}">
+                    <span th:if="${#fields.hasErrors('filter.description')}"
+                          th:errors="*{filter.description}"></span>
+                </div>
+                <div class="col-md-3">
+                    <label>Минимальная цена:</label>
+                    <br><input class="border border-dark" type="text" th:field="${filter.minPrice}">
+                    <span th:if="${#fields.hasErrors('filter.minPrice')}" th:errors="*{filter.minPrice}"></span>
+
+                    <label>Максимальная цена:</label>
+                    <br><input class="border border-dark" type="text" th:field="${filter.maxPrice}">
+                    <span th:if="${#fields.hasErrors('filter.maxPrice')}"
+                          th:errors="*{filter.maxPrice}"></span>
+                </div>
+                <div class="col-md-3">
+                    <label>Максимальное число гостей:</label>
+                    <br><input class="border border-dark" type="text" th:field="${filter.maxCountGuests}">
+                    <span th:if="${#fields.hasErrors('filter.maxCountGuests')}"
+                          th:errors="*{filter.maxCountGuests}"></span>
+
+                    <br><label>Отель:</label>
+                    <br><input class="border border-dark" type="text"
+                               th:field="${filter.hotelId}">
+                    <span th:if="${#fields.hasErrors('filter.hotelId')}"
+                          th:errors="*{filter.hotelId}"></span>
+                </div>
+                <div class="col-md-3">
+                    <label>Дата заезда:</label>
+                    <br><input class="border border-dark" type="date"
+                               th:field="${filter.busyFrom}">
+                    <span th:if="${#fields.hasErrors('filter.busyFrom')}"
+                          th:errors="*{filter.busyFrom}"></span>
+
+                    <br><label>Дата выезда:</label>
+                    <br><input class="border border-dark" type="date" th:field="${filter.busyTo}">
+                    <span th:if="${#fields.hasErrors('filter.busyTo')}"
+                          th:errors="*{filter.busyTo}"></span>
+                    <br>
+                    <div class="col-md-9">
+                        <button type="submit" class="btn btn-secondary mt-4">Найти комнату</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <table class="table table-striped">
+        <h1 style="text-align: center;">Комнаты</h1>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Описание</th>
+            <th style="text-align: center;">Отель</th>
+            <th style="text-align: center;">Номер</th>
+            <th style="text-align: center;">Цена</th>
+            <th>Максимальное число гостей</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr th:each="room : ${rooms}">
+            <td>
+                <a th:href="@{/api/v1/room/{id}(id=${room.id})}" th:text="${room.id}"></a>
+            </td>
+            <td th:text="${room.name}"></td>
+            <td th:text="${room.description}"></td>
+            <td>
+                <a th:href="@{/api/v1/hotel/{id}(id=${room.hotel.id})}" th:text="${room.hotel.hotelName}"></a>
+            </td>
+            <td style="text-align: center;" th:text="${room.number}"></td>
+            <td style="text-align: center;" th:text="${room.price}"></td>
+            <td style="text-align: center;" th:text="${room.maxCountGuests}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="pageSize">Размер страницы</label>
+            <input type="number" class="form-control" id="pageSize" name="pageSize"
+                   th:value="${pageSize}" min="10" th:max="${max}">
+        </div>
+        <div class="form-group col-md-3">
+            <label for="pageNumber">Номер страницы</label>
+            <input type="number" class="form-control" id="pageNumber" name="pageNumber"
+                   th:value="${pageNumber}" min="0" th:max="${max}">
+        </div>
+        <div class="col-md-3 mt-2">
+            <button type="submit" class="btn btn-secondary mt-4">Применить</button>
+        </div>
+
+    </div>
+    <div sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/api/v1/room/create}" class="btn btn-dark mt-4">Создать новую комнату</a>
+    </div>
+</div>
+</body>
+</html>

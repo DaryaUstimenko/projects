@@ -1,16 +1,19 @@
 package com.example.booking.service.impl;
 
 import com.example.booking.entity.Hotel;
+import com.example.booking.entity.User;
 import com.example.booking.exception.IncorrectMarkException;
 import com.example.booking.repository.HotelRepository;
 import com.example.booking.repository.HotelSpecification;
 import com.example.booking.service.AbstractEntityService;
 import com.example.booking.service.HotelService;
 import com.example.booking.web.model.request.HotelsFilterRequest;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -72,12 +75,6 @@ public class HotelServiceImpl extends AbstractEntityService<Hotel, UUID, HotelRe
         }
         if (!Objects.equals(oldEntity.getCenterDistance(), newEntity.getCenterDistance())) {
             oldEntity.setCenterDistance(newEntity.getCenterDistance());
-        }
-        if (!Objects.equals(oldEntity.getRating(), newEntity.getRating())) {
-            oldEntity.setRating(newEntity.getRating());
-        }
-        if (!Objects.equals(oldEntity.getNumberOFMarks(), newEntity.getNumberOFMarks())) {
-            oldEntity.setNumberOFMarks(newEntity.getNumberOFMarks());
         }
         log.info("UpdateFields in hotel: " + oldEntity.getHotelName());
 

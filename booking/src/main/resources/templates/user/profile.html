@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+</head>
+<body>
+<div class="container mt-7">
+    <div style="text-align: center;">
+        <a th:href="@{/api/v1/hotel/filter}" class="btn btn-secondary float-left">На главную</a>
+        <form  th:action="@{/api/v1/user/logout}" method="post">
+            <input class="btn btn-primary float-right" type="submit" value="Выйти"/>
+        </form>
+        <div class="mt-1" sec:authorize="hasRole('ADMIN')" style="text-align: center;">
+            <a th:href="@{/api/v1/hotel/create}" class="btn btn-secondary">Создать отель</a>
+            <a th:href="@{/api/v1/room/create}" class="btn btn-secondary">Создать комнату</a>
+            <a th:href="@{/api/v1/user}" class="btn btn-secondary">Все пользователи</a>
+            <a th:href="@{/api/v1/booking}" class="btn btn-secondary">Все бронирования</a>
+            <a th:href="@{/api/v1/statistics}" class="btn btn-dark">Скачать статистику приложения</a>
+        </div>
+    </div>
+    <h1 class="mt-4" style="text-align: center;">Пользователь</h1>
+    <table class="table" style="text-align: center;">
+        <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.email}"></td>
+        <td>
+            <a th:href="@{/api/v1/user/update/{id}(id=${user.id})}" class="btn btn-primary">Изменить</a>
+            <a th:href="@{/api/v1/user/delete/{id}(id=${user.id})}" class="btn btn-danger">Удалить</a>
+        </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="mt-1">
+        <a th:href="@{/api/v1/booking/profile}" class="btn btn-dark">Мои заказы</a>
+    </div>
+</div>
+</body>
+</html>

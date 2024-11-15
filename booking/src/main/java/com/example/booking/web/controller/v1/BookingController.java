@@ -1,10 +1,10 @@
-package com.example.booking.web.controller;
+package com.example.booking.web.controller.v1;
 
 import com.example.booking.aop.AuthorizeAction;
 import com.example.booking.entity.Booking;
 import com.example.booking.mapper.BookingMapper;
 import com.example.booking.service.BookingService;
-import com.example.booking.service.impl.KafkaEventService;
+import com.example.booking.service.KafkaEventService;
 import com.example.booking.web.model.request.PaginationRequest;
 import com.example.booking.web.model.request.UpsertBookingRequest;
 import com.example.booking.web.model.response.BookingResponse;
@@ -49,7 +49,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingMapper.bookingToResponse(bookingService.findById(id)));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<BookingResponse> createBooking(@RequestBody @Valid UpsertBookingRequest request,
                                                          @RequestParam UUID roomId,
@@ -63,20 +63,19 @@ public class BookingController {
                 .body(bookingMapper.bookingToResponse(newBooking));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @AuthorizeAction(actionType = "update")
     public ResponseEntity<BookingResponse> updateBooking(@PathVariable UUID id,
                                                          @RequestBody @Valid UpsertBookingRequest request,
-                                                         @RequestParam(required = false) UUID roomId,
-                                                         @RequestParam(required = false) UUID userId) {
+                                                         @RequestParam(required = false) UUID roomId) {
         Booking updatedBooking = bookingService.updateBooking(bookingMapper.upsertRequestToBooking(request),
-                id, roomId, userId);
+                id, roomId);
 
         return ResponseEntity.ok(bookingMapper.bookingToResponse(updatedBooking));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @AuthorizeAction(actionType = "delete")
     public ResponseEntity<Void> deleteById(@PathVariable UUID id) {

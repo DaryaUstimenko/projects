@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Users Pages</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+</head>
+<body>
+<div class="container mt-7">
+    <div style="text-align: center;">
+        <a th:href="@{/api/v1/hotel/filter}" class="btn btn-secondary float-left">На главную</a>
+        <a th:href="@{/api/v1/user/profile}" class="btn btn-dark float-right">Личный кабинет</a>
+    </div>
+    <form th:action="@{/api/v1/user}" method="get">
+        <table class="table table-striped">
+            <h1 class="mb-4" style="text-align: center;">Все пользователи</h1>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Имя</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td>
+                <a th:href="@{/api/v1/user/{id}(id=${user.id})}" th:text="${user.id}"></a>
+            </td>
+            <td>
+                <a th:href="@{/api/v1/user/name/{username}(username=${user.username})}" th:text="${user.username}"></a>
+            </td>
+            <td th:text="${user.email}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="pageSize">Размер страницы</label>
+            <input type="number" class="form-control" id="pageSize" name="pageSize"
+                   th:value="${paginationRequest.pageSize}" min="1" th:max="${max}" required>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="pageNumber">Номер страницы</label>
+            <input type="number" class="form-control" id="pageNumber" name="pageNumber"
+                   th:value="${paginationRequest.pageNumber}" min="0" th:max="${max}" required>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-secondary mt-4">Применить</button>
+        </div>
+    </div>
+    </form>
+</div>
+</body>
+</html>

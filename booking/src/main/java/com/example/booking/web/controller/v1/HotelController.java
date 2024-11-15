@@ -1,4 +1,4 @@
-package com.example.booking.web.controller;
+package com.example.booking.web.controller.v1;
 
 import com.example.booking.entity.Hotel;
 import com.example.booking.mapper.HotelMapper;
@@ -49,7 +49,7 @@ public class HotelController {
         return ResponseEntity.ok(hotelMapper.hotelToResponse(hotelService.findById(id)));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<HotelResponse> createHotel(@RequestBody @Valid UpsertHotelUpdateRequest request) {
         Hotel newHotel = hotelService.save(hotelMapper.upsertRequestToUpdateHotel(request));
@@ -68,16 +68,18 @@ public class HotelController {
         return ResponseEntity.ok(hotelMapper.hotelToResponse(updatedHotel));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<HotelUpdateResponse> updateHotel(@RequestBody @Valid UpsertHotelUpdateRequest request,
-                                                           @PathVariable UUID id) {
+    public ResponseEntity<HotelUpdateResponse> updateHotel(
+            @PathVariable UUID id,
+            @RequestBody @Valid UpsertHotelUpdateRequest request) {
+
         Hotel updatedHotel = hotelService.update(id, hotelMapper.upsertRequestToUpdateHotel(request));
 
         return ResponseEntity.ok(hotelMapper.hotelUpdateToResponse(updatedHotel));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
         hotelService.deleteById(id);

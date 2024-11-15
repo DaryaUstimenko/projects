@@ -25,7 +25,7 @@ public interface HotelSpecification {
             if (hotelId == null) {
                 return null;
             }
-            return cb.equal(root.get("hotel").get("id"), hotelId);
+            return cb.equal(root.get(Hotel.Fields.id), hotelId);
         };
     }
 

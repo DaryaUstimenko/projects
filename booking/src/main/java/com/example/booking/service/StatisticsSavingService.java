@@ -1,4 +1,4 @@
-package com.example.booking.service.impl;
+package com.example.booking.service;
 
 import com.example.booking.entity.BookingEvent;
 import com.example.booking.entity.RegistrationEvent;

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Room</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/images/style.css">
+</head>
+<body>
+<div class="container-fluid mt-7">
+    <div style="text-align: center;">
+        <a th:href="@{/api/v1/hotel/filter}" class="btn btn-secondary float-left">На главную</a>
+        <a th:href="@{/api/v1/user/profile}" class="btn btn-dark float-right">Личный кабинет</a>
+    </div>
+    <form th:action="@{/api/v1/room/{id}(id=${room.id})}" method="get">
+        <br>
+        <br>
+        <h1 style="text-align: center;">Комната</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Описание</th>
+                <th style="text-align: center;">Отель</th>
+                <th style="text-align: center;">Номер</th>
+                <th style="text-align: center;">Цена</th>
+                <th style="text-align: center;">Максимальное число гостей</th>
+            </tr>
+            </thead>
+            <tbody>
+            <td th:text="${room.id}"></td>
+            <td th:text="${room.name}"></td>
+            <td th:text="${room.description}"></td>
+            <td>
+                <a th:href="@{/api/v1/hotel/{id}(id=${hotelId})}" th:text="${room.hotel.hotelName}"></a>
+            </td>
+            <td style="text-align: center;" th:text="${room.number}"></td>
+            <td style="text-align: center;" th:text="${room.price}"></td>
+            <td style="text-align: center;" th:text="${room.maxCountGuests}"></td>
+            <div sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/api/v1/room/update/{id}(id=${room.id})}" class="btn btn-primary">Изменить</a>
+                <a th:href="@{/api/v1/room/delete/{id}(id=${room.id})}" class="btn btn-danger">Удалить</a>
+            </div>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+    <br><a th:href="@{/api/v1/booking/create(roomId=${room.id})}" class="btn btn-secondary">Забронировать</a>
+</div>
+</body>
+</html>

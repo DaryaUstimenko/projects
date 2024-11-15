@@ -1,10 +1,9 @@
 package com.example.booking.web.model.request;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -32,5 +31,6 @@ public class UpsertHotelUpdateRequest {
     private String address;
 
     @NotNull
+    @Min(value = (long) 0.0, message = "Not less then 0.0")
     private double centerDistance;
 }

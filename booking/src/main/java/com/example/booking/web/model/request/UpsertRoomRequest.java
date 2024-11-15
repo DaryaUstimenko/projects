@@ -23,12 +23,14 @@ public class UpsertRoomRequest {
     @Size(min = 3, max = 120, message = "Min size for name: {min}. Max size is: {max}")
     private String description;
 
-    @NotNull
+    private UUID hotelId;
+
+    @NotNull(message = "Not null")
     private int number;
 
-    @NotNull
+    @NotNull(message = "Not null")
     private int price;
 
-    @NotNull
+    @NotNull(message = "Not null")
     private int maxCountGuests;
 }
