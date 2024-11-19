@@ -25,6 +25,7 @@ public class Hotel {
     @Column(nullable = false)
     private String hotelName;
 
+    @Column
     private String title;
 
     @Column(nullable = false)
@@ -40,10 +41,13 @@ public class Hotel {
     @ToString.Exclude
     private List<Room> rooms = new ArrayList<>();
 
+    @Column
     private double rating;
 
+    @Column
     private int mark;
 
+    @Column
     private int numberOFMarks;
 
     public void addRoom(Room room) {

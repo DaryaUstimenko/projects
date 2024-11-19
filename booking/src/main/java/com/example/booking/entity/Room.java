@@ -24,6 +24,7 @@ public class Room {
     @Column(nullable = false)
     private String name;
 
+    @Column
     private String description;
 
     @ManyToOne
@@ -40,8 +41,10 @@ public class Room {
     @Column(nullable = false)
     private int maxCountGuests;
 
+    @Column
     private LocalDate busyFrom;
 
+    @Column
     private LocalDate busyTo;
 
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
