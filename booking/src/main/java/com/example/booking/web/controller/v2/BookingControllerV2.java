@@ -3,13 +3,16 @@ package com.example.booking.web.controller.v2;
 import com.example.booking.aop.AuthorizeAction;
 import com.example.booking.entity.Booking;
 import com.example.booking.entity.User;
+import com.example.booking.exception.AlreadyDateBusyException;
 import com.example.booking.mapper.BookingMapper;
 import com.example.booking.service.BookingService;
 import com.example.booking.service.UserService;
 import com.example.booking.service.KafkaEventService;
 import com.example.booking.web.model.request.PaginationRequest;
 import com.example.booking.web.model.request.UpsertBookingRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,11 +21,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Slf4j
 @Controller
 @RequestMapping("/api/v1/booking")
 @RequiredArgsConstructor
@@ -89,18 +96,27 @@ public class BookingControllerV2 {
     @PostMapping(value = "/create", produces = MediaType.TEXT_HTML_VALUE)
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public String createBooking(Principal principal, @RequestParam(name = "roomId") UUID roomId,
-                                @RequestBody @ModelAttribute UpsertBookingRequest booking, Model model) {
-
-        if (principal != null) {
-            model.addAttribute("booking", booking);
-            String username = principal.getName();
-            User user = userService.findByUsername(username);
-            Booking newBooking = bookingService.addBooking(
-                    bookingMapper.upsertRequestToBooking(booking),
-                    roomId, user.getId());
-            kafkaEventService.bookingEvent(newBooking);
+                                @RequestBody @ModelAttribute UpsertBookingRequest booking, Model model) throws JsonProcessingException {
+        try {
+            if (principal != null) {
+                model.addAttribute("booking", booking);
+                String username = principal.getName();
+                User user = userService.findByUsername(username);
+                Booking newBooking = bookingService.addBooking(
+                        bookingMapper.upsertRequestToBooking(booking),
+                        roomId, user.getId());
+                kafkaEventService.bookingEvent(newBooking);
+                //ВОПРОС
+                List<LocalDate> unavailableDates = bookingService.getAllUnavailableDates(newBooking);
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            String jsonArray = objectMapper.writeValueAsString(unavailableDates);
+                model.addAttribute("unavailableDates", unavailableDates);
+            }
+            return "redirect:/api/v1/booking/profile";
+        } catch (AlreadyDateBusyException ex) {
+            model.addAttribute("errorMessage", ex.getMessage());
+            return "booking/booking_create";
         }
-        return "redirect:/api/v1/booking/profile";
     }
 
     @GetMapping(value = "/update/{id}", produces = MediaType.TEXT_HTML_VALUE)
@@ -138,5 +154,12 @@ public class BookingControllerV2 {
         bookingService.deleteBooking(id);
 
         return "redirect:/api/v1/booking/profile";
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleException(Exception ex) {
+        ModelAndView modelAndView = new ModelAndView("error");
+        modelAndView.addObject("errorMessage", ex.getMessage());
+        return modelAndView;
     }
 }

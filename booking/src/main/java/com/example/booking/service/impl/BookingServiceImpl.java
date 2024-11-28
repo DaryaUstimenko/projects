@@ -11,8 +11,6 @@ import com.example.booking.service.AbstractEntityService;
 import com.example.booking.service.BookingService;
 import com.example.booking.service.RoomService;
 import com.example.booking.service.UserService;
-import com.example.booking.web.model.response.ErrorResponse;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -76,7 +74,7 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
                     " to: " + booking.getBusyTo() +
                     " at the hotel: " + room.getHotel().getHotelName().toUpperCase(Locale.ROOT));
         } else {
-            throw new AlreadyDateBusyException("Dates are busy");
+            throw new AlreadyDateBusyException("This date is busy");
         }
 
         log.info("Add booking for user: " + user.getUsername());
@@ -122,8 +120,6 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
             throw new WrongDatePeriodException("You have entered a start date later " +
                     "than the final booking date! Please changed it!");
         }
-        log.info("Add booking for room: " + room.getName() + ". Now his room busy for duration: " +
-                period.getDays());
 
         return room.getUnavailableDates().stream().
                 allMatch(d -> (!busyFrom.isBefore(d.getBusyTo()) || !busyTo.isAfter(d.getBusyFrom())) &&
@@ -147,6 +143,19 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
             }
         });
         datesToRemove.forEach(room::clearUnavailableDates);
+    }
+
+    public List<LocalDate> getAllUnavailableDates(Booking booking){
+        List<LocalDate> unavailableDatesList = new ArrayList<>();
+        for (UnavailableDates unavailableDates : booking.getRoom().getUnavailableDates()){
+            LocalDate currentDate = unavailableDates.getBusyFrom();
+            while (currentDate.isBefore(unavailableDates.getBusyTo()) ||
+                    currentDate.isEqual(unavailableDates.getBusyTo())) {
+                unavailableDatesList.add(currentDate);
+                currentDate = currentDate.plusDays(1);
+            }
+        }
+        return unavailableDatesList;
     }
 
     @Override

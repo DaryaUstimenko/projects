@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/images/style.css">
 </head>
 <body>
-<div class="container-fluid mt-7">
+<div class="container mt-7">
     <div style="text-align: center;">
         <a th:href="@{/api/v1/hotel/filter}" class="btn btn-secondary float-left">На главную</a>
         <a th:href="@{/api/v1/user/profile}" class="btn btn-dark float-right">Личный кабинет</a>
@@ -46,7 +46,9 @@
             </tbody>
         </table>
     </form>
-    <br><a th:href="@{/api/v1/booking/create(roomId=${room.id})}" class="btn btn-secondary">Забронировать</a>
+    <div style="text-align: center;">
+        <br><a th:href="@{/api/v1/booking/create(roomId=${room.id})}" class="btn btn-secondary">Забронировать</a>
+    </div>
 </div>
 </body>
 </html>

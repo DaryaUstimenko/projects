@@ -6,36 +6,45 @@
     <title>Create booking</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="/images/style.css">
-    <script src="/script/script.js"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 </head>
-
 <body>
+<script src="/script/script.js"></script>
 <div class="container mt-7">
     <div style="text-align: center;">
         <a th:href="@{/api/v1/hotel/filter}" class="btn btn-secondary float-left">На главную</a>
         <a th:href="@{/api/v1/user/profile}" class="btn btn-dark float-right">Личный кабинет</a>
     </div>
-<div class="d-flex align-items-center justify-content-center min-vh-100">
-    <form method="POST">
-        <h1 style="text-align: center;">Создать заказ</h1>
-        <input type="hidden" name="id" th:value="${booking?.id}">
-        <div>
-            <div style="text-align: center;">
-                <br><label>Дата заезда:</label>
-                <br><input class="border border-dark" type="date" th:field="${booking.busyFrom}">
-
+    <div class="d-flex align-items-center justify-content-center min-vh-100">
+        <form method="POST">
+            <h1 style="text-align: center;">Создать заказ</h1>
+            <input type="hidden" name="id" th:value="${booking?.id}">
+            <div>
+                <div style="text-align: center;">
+                    <br><label>Дата заезда:</label>
+                    <!--<br><input class="border border-dark" type="date" th:field="${booking.busyFrom}">-->
+                    <br><input class="border border-dark" style="text-align: center;" type="text" id="startDate"
+                               th:field="${booking.busyFrom}">
+                    <br><span th:if="${errorMessage != null}" class="text-danger" th:text="${errorMessage}"></span>
+                </div>
+                <div style="text-align: center;">
+                    <br><label>Дата вызда:</label>
+                    <!--<br><input class="border border-dark" type="date" th:field="${booking.busyTo}">-->
+                    <br><input class="border border-dark" style="text-align: center;" type="text" id="endDate"
+                               th:field="${booking.busyTo}">
+                    <br><span th:if="${errorMessage != null}" class="text-danger" th:text="${errorMessage}"></span>
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn btn-dark mt-4" type="submit">Забронировать комнату</button>
+                </div>
             </div>
-            <div style="text-align: center;">
-                <br><label>Дата вызда:</label>
-                <br><input class="border border-dark" type="date" th:field="${booking.busyTo}">
-                <span th:if="${errorMessage != null}" class="text-danger" th:text="${errorMessage}"></span>
-            </div>
-            <div style="text-align: center;">
-                <button class="btn btn-dark mt-4" type="submit">Забронировать комнату</button>
-            </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
 </div>
 </body>
 </html>

@@ -42,13 +42,13 @@ public class ExceptionHandlerController {
                 .body(new ErrorResponse(ex.getMessage()));
     }
 
-    @ExceptionHandler(AlreadyDateBusyException.class)
-    public ResponseEntity<ErrorResponse> alreadyDateBusy(AlreadyDateBusyException ex) {
-        log.error("This dates are busy:", ex);
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(ex.getMessage()));
-    }
+//    @ExceptionHandler(AlreadyDateBusyException.class)
+//    public ResponseEntity<ErrorResponse> alreadyDateBusy(AlreadyDateBusyException ex) {
+//        log.error("This dates are busy:", ex);
+//
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                .body(new ErrorResponse(ex.getMessage()));
+//    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> notValid(MethodArgumentNotValidException ex) {
