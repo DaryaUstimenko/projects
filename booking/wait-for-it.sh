@@ -1,0 +1,7 @@
+#!/bin/bash
+
+ZOOKEEPER_HOST="zookeeper"
+ZOOKEEPER_PORT="2181"
+KAFKA_HOST="kafka-broker"
+KAFKA_PORT="9092"
+TIMEOUT="30"

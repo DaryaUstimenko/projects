@@ -19,5 +19,7 @@ public interface BookingService extends EntityService<Booking, UUID> {
 
     Page<Booking> findAllByUser(User user, Pageable pageable);
 
-    List<LocalDate> getAllUnavailableDates(Booking booking);
+    List<LocalDate> setAllUnavailableDates(Booking booking);
+
+    List<LocalDate> getAllUnavailableDates();
 }

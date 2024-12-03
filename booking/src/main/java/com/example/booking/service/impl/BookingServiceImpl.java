@@ -28,6 +28,8 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
 
     private final RoomService roomService;
     private final UserService userService;
+    private List<LocalDate> unavailableDatesList = new ArrayList<>();
+    ;
 
     public BookingServiceImpl(BookingRepository repository, RoomService roomService, UserService userService) {
         super(repository);
@@ -145,9 +147,16 @@ public class BookingServiceImpl extends AbstractEntityService<Booking, UUID, Boo
         datesToRemove.forEach(room::clearUnavailableDates);
     }
 
-    public List<LocalDate> getAllUnavailableDates(Booking booking){
-        List<LocalDate> unavailableDatesList = new ArrayList<>();
-        for (UnavailableDates unavailableDates : booking.getRoom().getUnavailableDates()){
+
+    @Override
+    public List<LocalDate> getAllUnavailableDates() {
+        return unavailableDatesList;
+    }
+
+    @Override
+    public List<LocalDate> setAllUnavailableDates(Booking booking) {
+//        unavailableDatesList = new ArrayList<>();
+        for (UnavailableDates unavailableDates : booking.getRoom().getUnavailableDates()) {
             LocalDate currentDate = unavailableDates.getBusyFrom();
             while (currentDate.isBefore(unavailableDates.getBusyTo()) ||
                     currentDate.isEqual(unavailableDates.getBusyTo())) {

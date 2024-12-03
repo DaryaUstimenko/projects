@@ -10,6 +10,9 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 </head>
@@ -27,14 +30,12 @@
             <div>
                 <div style="text-align: center;">
                     <br><label>Дата заезда:</label>
-                    <!--<br><input class="border border-dark" type="date" th:field="${booking.busyFrom}">-->
                     <br><input class="border border-dark" style="text-align: center;" type="text" id="startDate"
                                th:field="${booking.busyFrom}">
                     <br><span th:if="${errorMessage != null}" class="text-danger" th:text="${errorMessage}"></span>
                 </div>
                 <div style="text-align: center;">
                     <br><label>Дата вызда:</label>
-                    <!--<br><input class="border border-dark" type="date" th:field="${booking.busyTo}">-->
                     <br><input class="border border-dark" style="text-align: center;" type="text" id="endDate"
                                th:field="${booking.busyTo}">
                     <br><span th:if="${errorMessage != null}" class="text-danger" th:text="${errorMessage}"></span>

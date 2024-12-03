@@ -11,6 +11,8 @@ import com.example.booking.service.KafkaEventService;
 import com.example.booking.web.model.request.PaginationRequest;
 import com.example.booking.web.model.request.UpsertBookingRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -105,18 +107,23 @@ public class BookingControllerV2 {
                 Booking newBooking = bookingService.addBooking(
                         bookingMapper.upsertRequestToBooking(booking),
                         roomId, user.getId());
-                kafkaEventService.bookingEvent(newBooking);
-                //ВОПРОС
-                List<LocalDate> unavailableDates = bookingService.getAllUnavailableDates(newBooking);
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            String jsonArray = objectMapper.writeValueAsString(unavailableDates);
-                model.addAttribute("unavailableDates", unavailableDates);
+                bookingService.setAllUnavailableDates(newBooking);
+                if(newBooking != null) {
+                    kafkaEventService.bookingEvent(newBooking);
+                }
             }
             return "redirect:/api/v1/booking/profile";
         } catch (AlreadyDateBusyException ex) {
             model.addAttribute("errorMessage", ex.getMessage());
+
             return "booking/booking_create";
         }
+    }
+
+    @GetMapping("/unavailable-dates")
+    @ResponseBody
+    public List<LocalDate> getUnavailableDates() {
+        return bookingService.getAllUnavailableDates();
     }
 
     @GetMapping(value = "/update/{id}", produces = MediaType.TEXT_HTML_VALUE)
