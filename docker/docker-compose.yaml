@@ -1,0 +1,61 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: account_db
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=postgre_user
+      - POSTGRES_PASSWORD=postgre_secret_password
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=account_db
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - app-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.5.0
+    container_name: zookeeper
+    restart: always
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
+  kafka:
+    image: wurstmeister/kafka:2.13-2.6.3
+    container_name: kafka
+    restart: always
+    ports:
+      - "9094:9094"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: 91.197.98.213
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: OUTSIDE://91.197.98.213:9094
+      KAFKA_LISTENERS: OUTSIDE://:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: OUTSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: OUTSIDE
+    volumes:
+      - kafka:/data
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+      - zookeeper
+
+volumes:
+  database-data:
+  kafka:
+
+networks:
+  app-network:
+    driver: bridge

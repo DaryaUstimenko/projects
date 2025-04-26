@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-create-schema
+      author: Darya Ust
+      changes:
+        - sqlFile:
+            path: db/changelog/db-changelog-1-create-schema.sql
+  - changeSet:
+      id: 2-create-table
+      author: Darya Ust
+      changes:
+        - sqlFile:
+            path: db/changelog/db-changelog-2-create-table.sql
+  - changeSet:
+      id: 3-change-table
+      author: Darya Ust
+      changes:
+        - sqlFile:
+            path: db/changelog/db-changelog-3-create-table.sql
+  - changeSet:
+      id: 4-change-table
+      author: Darya Ust
+      changes:
+        - sqlFile:
+            path: db/changelog/db-changelog-4-create-table.sql
+  - changeSet:
+      id: 5-change-colomn-birthdate
+      author: Darya Ust
+      changes:
+        - sqlFile:
+            path: db/changelog/db-changelog-5-changed-table.sql
+
+
+
