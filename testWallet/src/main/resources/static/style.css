@@ -1,0 +1,33 @@
+body {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    margin: 0;
+
+}
+.container {
+  background-color: #DCDCDC;
+  text-align: center;
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 10px;
+  width: 350px;
+}
+.button {
+  margin-top: 10px;
+  justify-items: center;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  padding: 20px 50px;
+  text-align: center;
+  font-size: 1em;
+}
+.text {
+  font-color: white
+}
+.error, .error span, .error div {
+  color: #F60F0F;
+}

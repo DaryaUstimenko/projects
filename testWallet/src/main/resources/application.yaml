@@ -1,0 +1,18 @@
+spring:
+
+  jpa:
+    generate-ddl: true
+    properties:
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/wallet_db?currentSchema=schema_wallet
+    username: postgres
+    password: postgres
+    hikari:
+      schema: schema_wallet
+      connection-init-sql: CREATE SCHEMA IF NOT EXISTS schema_wallet
+      connection-timeout: 100000
+  liquibase:
+    change_log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+    drop-first: false

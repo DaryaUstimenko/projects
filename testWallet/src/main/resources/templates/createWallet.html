@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<!--<div class="container">-->
+<form th:action="@{/api/v1/wallet}" method="post">
+    <input type="hidden" name="id" th:value="${wallet?.walletId}">
+    <input type="hidden" name="id" th:value="${wallet.amount}">
+<!--    <br><span th:if="${errorMessage != null}" class="text-danger" th:text="${errorMessage}"></span>-->
+
+<!-- <div class="button-container"> -->
+    <button class="button" type="submit">Создать кошелек</button>
+<!-- </div> -->
+</form>
+<!--</div>-->
+</body>
+</html>

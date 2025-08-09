@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Get Balance</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+<h2 th:if="${wallet != null}">Ваш баланс: <span th:text="${wallet.balance}" руб></span></h2>
+<button class="button">
+   <span class="text"> <a  th:href="@{/api/v1/wallet/{id}(id=${wallet.walletId})}">Кошелек</a></span>
+ </button>
+</div>
+</body>
+</html>
